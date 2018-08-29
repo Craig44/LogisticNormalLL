@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1368404644 source:c:\users\ahmed samy\documents\cpp\inversematrix\main.cpp
+	<iostream>
+	"MatrixOps.h"
+
+1368404678 c:\users\ahmed samy\documents\cpp\inversematrix\matrixops.h
+	<iostream>
+	<cmath>
+

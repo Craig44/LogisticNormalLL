@@ -1,0 +1,15 @@
+//============================================================================
+// Name        : LogisticNormal.cpp
+// Author      : Craig Marsh
+// Version     :
+// Copyright   : Your copyright notice
+// Description : Hello World in C++, Ansi-style
+//============================================================================
+
+#include <iostream>
+using namespace std;
+
+int main() {
+	cout << "LogisiticNormal" << endl; // prints LogisiticNormal
+	return 0;
+}

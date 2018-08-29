@@ -1,0 +1,7 @@
+eclipse.preferences.version=1
+org.eclipse.debug.ui.PREF_LAUNCH_PERSPECTIVES=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<launchPerspectives/>\r\n
+org.eclipse.debug.ui.consoleBackground=31,34,35
+org.eclipse.debug.ui.errorColor=165,123,97
+org.eclipse.debug.ui.inColor=224,226,228
+org.eclipse.debug.ui.outColor=224,226,228
+preferredTargets=org.eclipse.cdt.debug.ui.toggleCBreakpointTarget,org.eclipse.cdt.debug.ui.toggleCDynamicPrintfTarget\:org.eclipse.cdt.debug.ui.toggleCBreakpointTarget|

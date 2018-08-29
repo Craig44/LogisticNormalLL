@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1535406408309.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1808583412",
+    "id" : "AEBEA9BF",
+    "lastKnownWriteTime" : 1535505965,
+    "last_content_update" : 1535505965952,
+    "path" : "C:/Work/Projects/PhD/Logistic_normal/Rstudio/(00)ConfirmLogistic.r",
+    "project_path" : "(00)ConfirmLogistic.r",
+    "properties" : {
+        "cursorPosition" : "122,0",
+        "scrollLine" : "94"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

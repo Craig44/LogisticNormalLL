@@ -1,0 +1,537 @@
+17:18:04 **** Incremental Build of configuration Debug for project LogisticNormal ****
+make all 
+Building file: ../src/LogisticNormal.cpp
+Invoking: Cross G++ Compiler
+g++ -std=c++0x -I"C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0" -I"C:\Craig\projects\2016\DEE2015-02(TrawlSurveySimulation)\Logistic_normal\Libraries\Eigen" -O0 -g3 -c -fmessage-length=0  -std=c++11 -MMD -MP -MF"src/LogisticNormal.d" -MT"src/LogisticNormal.o" -o "src/LogisticNormal.o" "../src/LogisticNormal.cpp"
+../src/LogisticNormal.cpp: In function 'void Crout(int, std::vector<std::vector<double> >, std::vector<std::vector<double> >)':
+../src/LogisticNormal.cpp:107:43: error: no match for 'operator*' (operand types are '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' and '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}')
+          for(int p=0;p<k;++p)sum+=D[i*d+p]*D[p*d+k];
+                                           ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:386:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator*(const std::complex<_Tp>&, const std::complex<_Tp>&)
+     operator*(const complex<_Tp>& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:386:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:107:51: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+          for(int p=0;p<k;++p)sum+=D[i*d+p]*D[p*d+k];
+                                                   ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:395:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator*(const std::complex<_Tp>&, const _Tp&)
+     operator*(const complex<_Tp>& __x, const _Tp& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:395:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:107:51: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+          for(int p=0;p<k;++p)sum+=D[i*d+p]*D[p*d+k];
+                                                   ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:404:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator*(const _Tp&, const std::complex<_Tp>&)
+     operator*(const _Tp& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:404:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:107:51: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+          for(int p=0;p<k;++p)sum+=D[i*d+p]*D[p*d+k];
+                                                   ^
+../src/LogisticNormal.cpp:108:27: error: no match for 'operator-' (operand types are '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' and 'double')
+          D[i*d+k]=S[i*d+k]-sum; // not dividing by diagonals
+                           ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:328:5: note: candidate: template<class _Iterator> typename std::reverse_iterator<_Iterator>::difference_type std::operator-(const std::reverse_iterator<_Iterator>&, const std::reverse_iterator<_Iterator>&)
+     operator-(const reverse_iterator<_Iterator>& __x,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:328:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:108:28: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::reverse_iterator<_Iterator>'
+          D[i*d+k]=S[i*d+k]-sum; // not dividing by diagonals
+                            ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:380:5: note: candidate: template<class _IteratorL, class _IteratorR> decltype ((__y.base() - __x.base())) std::operator-(const std::reverse_iterator<_Iterator>&, const std::reverse_iterator<_IteratorR>&)
+     operator-(const reverse_iterator<_IteratorL>& __x,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:380:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:108:28: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::reverse_iterator<_Iterator>'
+          D[i*d+k]=S[i*d+k]-sum; // not dividing by diagonals
+                            ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:1138:5: note: candidate: template<class _IteratorL, class _IteratorR> decltype ((__x.base() - __y.base())) std::operator-(const std::move_iterator<_Iterator>&, const std::move_iterator<_IteratorR>&)
+     operator-(const move_iterator<_IteratorL>& __x,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:1138:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:108:28: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::move_iterator<_Iterator>'
+          D[i*d+k]=S[i*d+k]-sum; // not dividing by diagonals
+                            ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:1145:5: note: candidate: template<class _Iterator> decltype ((__x.base() - __y.base())) std::operator-(const std::move_iterator<_Iterator>&, const std::move_iterator<_Iterator>&)
+     operator-(const move_iterator<_Iterator>& __x,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:1145:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:108:28: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::move_iterator<_Iterator>'
+          D[i*d+k]=S[i*d+k]-sum; // not dividing by diagonals
+                            ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:65:0,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_bvector.h:208:3: note: candidate: std::ptrdiff_t std::operator-(const std::_Bit_iterator_base&, const std::_Bit_iterator_base&)
+   operator-(const _Bit_iterator_base& __x, const _Bit_iterator_base& __y)
+   ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_bvector.h:208:3: note:   no known conversion for argument 1 from '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' to 'const std::_Bit_iterator_base&'
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:356:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator-(const std::complex<_Tp>&, const std::complex<_Tp>&)
+     operator-(const complex<_Tp>& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:356:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:108:28: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+          D[i*d+k]=S[i*d+k]-sum; // not dividing by diagonals
+                            ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:365:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator-(const std::complex<_Tp>&, const _Tp&)
+     operator-(const complex<_Tp>& __x, const _Tp& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:365:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:108:28: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+          D[i*d+k]=S[i*d+k]-sum; // not dividing by diagonals
+                            ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:374:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator-(const _Tp&, const std::complex<_Tp>&)
+     operator-(const _Tp& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:374:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:108:28: note:   mismatched types 'const std::complex<_Tp>' and 'double'
+          D[i*d+k]=S[i*d+k]-sum; // not dividing by diagonals
+                            ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:451:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator-(const std::complex<_Tp>&)
+     operator-(const complex<_Tp>& __x)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:451:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:108:28: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+          D[i*d+k]=S[i*d+k]-sum; // not dividing by diagonals
+                            ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:923:5: note: candidate: template<class _Iterator, class _Container> typename __gnu_cxx::__normal_iterator<_Iterator, _Container>::difference_type __gnu_cxx::operator-(const __gnu_cxx::__normal_iterator<_Iterator, _Container>&, const __gnu_cxx::__normal_iterator<_Iterator, _Container>&)
+     operator-(const __normal_iterator<_Iterator, _Container>& __lhs,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:923:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:108:28: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const __gnu_cxx::__normal_iterator<_Iterator, _Container>'
+          D[i*d+k]=S[i*d+k]-sum; // not dividing by diagonals
+                            ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:911:5: note: candidate: template<class _IteratorL, class _IteratorR, class _Container> decltype ((__lhs.base() - __rhs.base())) __gnu_cxx::operator-(const __gnu_cxx::__normal_iterator<_IteratorL, _Container>&, const __gnu_cxx::__normal_iterator<_IteratorR, _Container>&)
+     operator-(const __normal_iterator<_IteratorL, _Container>& __lhs,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:911:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:108:28: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const __gnu_cxx::__normal_iterator<_IteratorL, _Container>'
+          D[i*d+k]=S[i*d+k]-sum; // not dividing by diagonals
+                            ^
+../src/LogisticNormal.cpp:112:43: error: no match for 'operator*' (operand types are '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' and '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}')
+          for(int p=0;p<k;++p)sum+=D[k*d+p]*D[p*d+j];
+                                           ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:386:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator*(const std::complex<_Tp>&, const std::complex<_Tp>&)
+     operator*(const complex<_Tp>& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:386:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:112:51: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+          for(int p=0;p<k;++p)sum+=D[k*d+p]*D[p*d+j];
+                                                   ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:395:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator*(const std::complex<_Tp>&, const _Tp&)
+     operator*(const complex<_Tp>& __x, const _Tp& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:395:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:112:51: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+          for(int p=0;p<k;++p)sum+=D[k*d+p]*D[p*d+j];
+                                                   ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:404:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator*(const _Tp&, const std::complex<_Tp>&)
+     operator*(const _Tp& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:404:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:112:51: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+          for(int p=0;p<k;++p)sum+=D[k*d+p]*D[p*d+j];
+                                                   ^
+../src/LogisticNormal.cpp:113:28: error: no match for 'operator-' (operand types are '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' and 'double')
+          D[k*d+j]=(S[k*d+j]-sum)/D[k*d+k];
+                            ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:328:5: note: candidate: template<class _Iterator> typename std::reverse_iterator<_Iterator>::difference_type std::operator-(const std::reverse_iterator<_Iterator>&, const std::reverse_iterator<_Iterator>&)
+     operator-(const reverse_iterator<_Iterator>& __x,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:328:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:113:29: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::reverse_iterator<_Iterator>'
+          D[k*d+j]=(S[k*d+j]-sum)/D[k*d+k];
+                             ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:380:5: note: candidate: template<class _IteratorL, class _IteratorR> decltype ((__y.base() - __x.base())) std::operator-(const std::reverse_iterator<_Iterator>&, const std::reverse_iterator<_IteratorR>&)
+     operator-(const reverse_iterator<_IteratorL>& __x,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:380:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:113:29: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::reverse_iterator<_Iterator>'
+          D[k*d+j]=(S[k*d+j]-sum)/D[k*d+k];
+                             ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:1138:5: note: candidate: template<class _IteratorL, class _IteratorR> decltype ((__x.base() - __y.base())) std::operator-(const std::move_iterator<_Iterator>&, const std::move_iterator<_IteratorR>&)
+     operator-(const move_iterator<_IteratorL>& __x,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:1138:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:113:29: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::move_iterator<_Iterator>'
+          D[k*d+j]=(S[k*d+j]-sum)/D[k*d+k];
+                             ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:1145:5: note: candidate: template<class _Iterator> decltype ((__x.base() - __y.base())) std::operator-(const std::move_iterator<_Iterator>&, const std::move_iterator<_Iterator>&)
+     operator-(const move_iterator<_Iterator>& __x,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:1145:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:113:29: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::move_iterator<_Iterator>'
+          D[k*d+j]=(S[k*d+j]-sum)/D[k*d+k];
+                             ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:65:0,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_bvector.h:208:3: note: candidate: std::ptrdiff_t std::operator-(const std::_Bit_iterator_base&, const std::_Bit_iterator_base&)
+   operator-(const _Bit_iterator_base& __x, const _Bit_iterator_base& __y)
+   ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_bvector.h:208:3: note:   no known conversion for argument 1 from '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' to 'const std::_Bit_iterator_base&'
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:356:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator-(const std::complex<_Tp>&, const std::complex<_Tp>&)
+     operator-(const complex<_Tp>& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:356:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:113:29: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+          D[k*d+j]=(S[k*d+j]-sum)/D[k*d+k];
+                             ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:365:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator-(const std::complex<_Tp>&, const _Tp&)
+     operator-(const complex<_Tp>& __x, const _Tp& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:365:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:113:29: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+          D[k*d+j]=(S[k*d+j]-sum)/D[k*d+k];
+                             ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:374:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator-(const _Tp&, const std::complex<_Tp>&)
+     operator-(const _Tp& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:374:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:113:29: note:   mismatched types 'const std::complex<_Tp>' and 'double'
+          D[k*d+j]=(S[k*d+j]-sum)/D[k*d+k];
+                             ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:451:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator-(const std::complex<_Tp>&)
+     operator-(const complex<_Tp>& __x)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:451:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:113:29: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+          D[k*d+j]=(S[k*d+j]-sum)/D[k*d+k];
+                             ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:923:5: note: candidate: template<class _Iterator, class _Container> typename __gnu_cxx::__normal_iterator<_Iterator, _Container>::difference_type __gnu_cxx::operator-(const __gnu_cxx::__normal_iterator<_Iterator, _Container>&, const __gnu_cxx::__normal_iterator<_Iterator, _Container>&)
+     operator-(const __normal_iterator<_Iterator, _Container>& __lhs,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:923:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:113:29: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const __gnu_cxx::__normal_iterator<_Iterator, _Container>'
+          D[k*d+j]=(S[k*d+j]-sum)/D[k*d+k];
+                             ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:911:5: note: candidate: template<class _IteratorL, class _IteratorR, class _Container> decltype ((__lhs.base() - __rhs.base())) __gnu_cxx::operator-(const __gnu_cxx::__normal_iterator<_IteratorL, _Container>&, const __gnu_cxx::__normal_iterator<_IteratorR, _Container>&)
+     operator-(const __normal_iterator<_IteratorL, _Container>& __lhs,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:911:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:113:29: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const __gnu_cxx::__normal_iterator<_IteratorL, _Container>'
+          D[k*d+j]=(S[k*d+j]-sum)/D[k*d+k];
+                             ^
+../src/LogisticNormal.cpp: In function 'void solveCrout(int, std::vector<std::vector<double> >, std::vector<std::vector<double> >, std::vector<std::vector<double> >)':
+../src/LogisticNormal.cpp:121:41: error: no match for 'operator*' (operand types are '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' and 'double')
+       for(int k=0;k<i;++k)sum+=LU[i*d+k]*y[k];
+                                         ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:386:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator*(const std::complex<_Tp>&, const std::complex<_Tp>&)
+     operator*(const complex<_Tp>& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:386:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:121:45: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+       for(int k=0;k<i;++k)sum+=LU[i*d+k]*y[k];
+                                             ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:395:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator*(const std::complex<_Tp>&, const _Tp&)
+     operator*(const complex<_Tp>& __x, const _Tp& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:395:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:121:45: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+       for(int k=0;k<i;++k)sum+=LU[i*d+k]*y[k];
+                                             ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:404:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator*(const _Tp&, const std::complex<_Tp>&)
+     operator*(const _Tp& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:404:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:121:45: note:   mismatched types 'const std::complex<_Tp>' and 'double'
+       for(int k=0;k<i;++k)sum+=LU[i*d+k]*y[k];
+                                             ^
+../src/LogisticNormal.cpp:122:17: error: no match for 'operator-' (operand types are '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' and 'double')
+       y[i]=(b[i]-sum)/LU[i*d+i];
+                 ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:328:5: note: candidate: template<class _Iterator> typename std::reverse_iterator<_Iterator>::difference_type std::operator-(const std::reverse_iterator<_Iterator>&, const std::reverse_iterator<_Iterator>&)
+     operator-(const reverse_iterator<_Iterator>& __x,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:328:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:122:18: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::reverse_iterator<_Iterator>'
+       y[i]=(b[i]-sum)/LU[i*d+i];
+                  ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:380:5: note: candidate: template<class _IteratorL, class _IteratorR> decltype ((__y.base() - __x.base())) std::operator-(const std::reverse_iterator<_Iterator>&, const std::reverse_iterator<_IteratorR>&)
+     operator-(const reverse_iterator<_IteratorL>& __x,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:380:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:122:18: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::reverse_iterator<_Iterator>'
+       y[i]=(b[i]-sum)/LU[i*d+i];
+                  ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:1138:5: note: candidate: template<class _IteratorL, class _IteratorR> decltype ((__x.base() - __y.base())) std::operator-(const std::move_iterator<_Iterator>&, const std::move_iterator<_IteratorR>&)
+     operator-(const move_iterator<_IteratorL>& __x,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:1138:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:122:18: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::move_iterator<_Iterator>'
+       y[i]=(b[i]-sum)/LU[i*d+i];
+                  ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:1145:5: note: candidate: template<class _Iterator> decltype ((__x.base() - __y.base())) std::operator-(const std::move_iterator<_Iterator>&, const std::move_iterator<_Iterator>&)
+     operator-(const move_iterator<_Iterator>& __x,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:1145:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:122:18: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::move_iterator<_Iterator>'
+       y[i]=(b[i]-sum)/LU[i*d+i];
+                  ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:65:0,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_bvector.h:208:3: note: candidate: std::ptrdiff_t std::operator-(const std::_Bit_iterator_base&, const std::_Bit_iterator_base&)
+   operator-(const _Bit_iterator_base& __x, const _Bit_iterator_base& __y)
+   ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_bvector.h:208:3: note:   no known conversion for argument 1 from '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' to 'const std::_Bit_iterator_base&'
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:356:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator-(const std::complex<_Tp>&, const std::complex<_Tp>&)
+     operator-(const complex<_Tp>& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:356:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:122:18: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+       y[i]=(b[i]-sum)/LU[i*d+i];
+                  ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:365:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator-(const std::complex<_Tp>&, const _Tp&)
+     operator-(const complex<_Tp>& __x, const _Tp& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:365:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:122:18: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+       y[i]=(b[i]-sum)/LU[i*d+i];
+                  ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:374:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator-(const _Tp&, const std::complex<_Tp>&)
+     operator-(const _Tp& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:374:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:122:18: note:   mismatched types 'const std::complex<_Tp>' and 'double'
+       y[i]=(b[i]-sum)/LU[i*d+i];
+                  ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:451:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator-(const std::complex<_Tp>&)
+     operator-(const complex<_Tp>& __x)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:451:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:122:18: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+       y[i]=(b[i]-sum)/LU[i*d+i];
+                  ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:923:5: note: candidate: template<class _Iterator, class _Container> typename __gnu_cxx::__normal_iterator<_Iterator, _Container>::difference_type __gnu_cxx::operator-(const __gnu_cxx::__normal_iterator<_Iterator, _Container>&, const __gnu_cxx::__normal_iterator<_Iterator, _Container>&)
+     operator-(const __normal_iterator<_Iterator, _Container>& __lhs,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:923:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:122:18: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const __gnu_cxx::__normal_iterator<_Iterator, _Container>'
+       y[i]=(b[i]-sum)/LU[i*d+i];
+                  ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h:67:0,
+                 from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:60,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:911:5: note: candidate: template<class _IteratorL, class _IteratorR, class _Container> decltype ((__lhs.base() - __rhs.base())) __gnu_cxx::operator-(const __gnu_cxx::__normal_iterator<_IteratorL, _Container>&, const __gnu_cxx::__normal_iterator<_IteratorR, _Container>&)
+     operator-(const __normal_iterator<_IteratorL, _Container>& __lhs,
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_iterator.h:911:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:122:18: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const __gnu_cxx::__normal_iterator<_IteratorL, _Container>'
+       y[i]=(b[i]-sum)/LU[i*d+i];
+                  ^
+../src/LogisticNormal.cpp:126:43: error: no match for 'operator*' (operand types are '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' and '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}')
+       for(int k=i+1;k<d;++k)sum+=LU[i*d+k]*x[k];
+                                           ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:386:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator*(const std::complex<_Tp>&, const std::complex<_Tp>&)
+     operator*(const complex<_Tp>& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:386:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:126:47: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+       for(int k=i+1;k<d;++k)sum+=LU[i*d+k]*x[k];
+                                               ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:395:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator*(const std::complex<_Tp>&, const _Tp&)
+     operator*(const complex<_Tp>& __x, const _Tp& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:395:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:126:47: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+       for(int k=i+1;k<d;++k)sum+=LU[i*d+k]*x[k];
+                                               ^
+In file included from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/traits.hpp:17:0,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/storage.hpp:26,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost/numeric/ublas/vector.hpp:21,
+                 from C:\Craig\Models\CASAL2\ThirdParty\boost\boost_1_58_0/boost\numeric\ublas\matrix.hpp:18,
+                 from ../src/LogisticNormal.cpp:11:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:404:5: note: candidate: template<class _Tp> std::complex<_Tp> std::operator*(const _Tp&, const std::complex<_Tp>&)
+     operator*(const _Tp& __x, const complex<_Tp>& __y)
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/complex:404:5: note:   template argument deduction/substitution failed:
+../src/LogisticNormal.cpp:126:47: note:   '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' is not derived from 'const std::complex<_Tp>'
+       for(int k=i+1;k<d;++k)sum+=LU[i*d+k]*x[k];
+                                               ^
+../src/LogisticNormal.cpp:127:11: error: no match for 'operator=' (operand types are '__gnu_cxx::__alloc_traits<std::allocator<std::vector<double> > >::value_type {aka std::vector<double>}' and 'double')
+       x[i]=(y[i]-sum); // not dividing by diagonals
+           ^
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:69:0,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/vector.tcc:167:5: note: candidate: std::vector<_Tp, _Alloc>& std::vector<_Tp, _Alloc>::operator=(const std::vector<_Tp, _Alloc>&) [with _Tp = double; _Alloc = std::allocator<double>]
+     vector<_Tp, _Alloc>::
+     ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/vector.tcc:167:5: note:   no known conversion for argument 1 from 'double' to 'const std::vector<double>&'
+In file included from C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/vector:64:0,
+                 from ../src/LogisticNormal.cpp:1:
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_vector.h:448:7: note: candidate: std::vector<_Tp, _Alloc>& std::vector<_Tp, _Alloc>::operator=(std::vector<_Tp, _Alloc>&&) [with _Tp = double; _Alloc = std::allocator<double>]
+       operator=(vector&& __x) noexcept(_Alloc_traits::_S_nothrow_move())
+       ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_vector.h:448:7: note:   no known conversion for argument 1 from 'double' to 'std::vector<double>&&'
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_vector.h:470:7: note: candidate: std::vector<_Tp, _Alloc>& std::vector<_Tp, _Alloc>::operator=(std::initializer_list<_Tp>) [with _Tp = double; _Alloc = std::allocator<double>]
+       operator=(initializer_list<value_type> __l)
+       ^
+C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_vector.h:470:7: note:   no known conversion for argument 1 from 'double' to 'std::initializer_list<double>'
+make: *** [src/LogisticNormal.o] Error 1
+
+17:18:11 Build Finished (took 7s.271ms)
+
