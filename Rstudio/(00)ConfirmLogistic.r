@@ -36,6 +36,7 @@ write.table(x = compdat$N, file = make.filename(file = "error_data.txt", path = 
 
 ## run the program
 setwd(DIR$`C++_work`);
+if (file.exists("results.txt")) file.remove("results.txt")
 system("LogNorm.exe notsexed 1",ignore.stdout = TRUE,ignore.stderr = TRUE)
 setwd(DIR$R)
 C_results = as.vector(read.table(make.filename(file = "results.txt", path = DIR$`C++_work`), header = F))
@@ -64,7 +65,7 @@ true_results[5] = NLLlogistnorm(compdat,sigma = sigma,phi,covmat=NULL,sepbysex=s
 
 
 true_results - C_results
-cbind(true_results, t(C_results))
+cbind(true_results, t(C_results),true_results -t(C_results))
 
 #########
 ## LIN
@@ -82,6 +83,7 @@ write.table(x = compdat$N, file = make.filename(file = "error_data.txt", path = 
 
 ## run the program
 setwd(DIR$`C++_work`);
+if (file.exists("results.txt")) file.remove("results.txt")
 system("LogNorm.exe sex 3",ignore.stdout = TRUE,ignore.stderr = TRUE)
 setwd(DIR$R)
 C_results = as.vector(read.table(make.filename(file = "results.txt", path = DIR$`C++_work`), header = F))
@@ -119,6 +121,6 @@ sexlag = F;
 true_results[8] = NLLlogistnorm(compdat,sigma = sigma,phi,covmat=NULL,sepbysex=sepbysex, sexlag=sexlag, robust=robust, ARMA=ARMA)
 
 true_results - C_results
-cbind(true_results, t(C_results))
+cbind(true_results, t(C_results),true_results -t(C_results))
 
 

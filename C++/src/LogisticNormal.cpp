@@ -29,32 +29,7 @@ vector<double> ARMAacf(vector<double> AR, int nBin);
 vector<double> GetRho(double& Phi1, int nBin);
 vector<double> RecursiveFilter(vector<double> ar_coef, int nBins, vector<double> initial_vals);
 
-template <typename MatrixType>
-inline typename MatrixType::Scalar logdet(const MatrixType& M, bool use_cholesky = false) {
-  using namespace Eigen;
-  using std::log;
-  typedef typename MatrixType::Scalar Scalar;
-  Scalar ld = 0;
-  if (use_cholesky) {
-    LLT<Matrix<Scalar,Dynamic,Dynamic>> chol(M);
-    auto& U = chol.matrixL();
-    for (unsigned i = 0; i < M.rows(); ++i)
-      ld += log(U(i,i));
-    ld *= 2;
-  } else {
-    PartialPivLU<Matrix<Scalar,Dynamic,Dynamic>> lu(M);
-    auto& LU = lu.matrixLU();
-    Scalar c = lu.permutationP().determinant(); // -1 or 1
-    for (unsigned i = 0; i < LU.rows(); ++i) {
-      const auto& lii = LU(i,i);
-      if (lii < Scalar(0)) c *= -1;
-      ld += log(abs(lii));
-    }
-    ld += log(c);
-  }
-  return ld;
-}
-
+double logdet(const MatrixXd& M, bool use_cholesky);
 ////////////////////
 // Begin main function
 ////////////////////
@@ -480,9 +455,9 @@ vector<double> ARMAacf(double AR, double MA, int nBin) {
 
   // Use the eigen library yo solve the inverse of for A with known vector B
   //vector<double> Ind;
-  vector<unsigned> seq;
+  vector<unsigned> seq(p + 1);
   for (unsigned i = 0; i <= p; ++i) {
-    seq.push_back(p - i);
+    seq[i] = (p - i);
   }
 
 
@@ -512,14 +487,11 @@ vector<double> ARMAacf(double AR, double MA, int nBin) {
   Cor.insert(Cor.begin(), final_acf[1]);
   Cor.insert(Cor.begin(), final_acf[0]);
   // Print results to screen
-  vector<double>::const_iterator first = Cor.begin();
-  vector<double>::const_iterator last = Cor.begin() + nBin;
-  vector<double> newVec(first, last);
-/*
-  for (auto num : newVec)
-    cout << num << " ";
-  cout << endl;
-  */
+
+  vector<double> newVec(nBin,0.0);
+  for (unsigned i = 0; i < nBin; ++i)
+    newVec[i] = Cor[i];
+
 
   return newVec;
 }
@@ -555,9 +527,9 @@ vector<double> ARMAacf(vector<double> AR, int nBin) {
 
   //cout << "size of rhs " << rhs.size() << endl;
   //vector<double> Ind;
-  vector<unsigned> seq;
+  vector<unsigned> seq(p + 1);
   for (unsigned i = 0; i <= p; ++i) {
-    seq.push_back(p - i);
+    seq[i] = (p - i);
   }
 
   // Declare Eigen variables
@@ -617,8 +589,18 @@ vector<double> ARMAacf(vector<double> AR, int nBin) {
   // Print results to screen
   vector<double>::const_iterator first = Cor.begin();
   vector<double>::const_iterator last = Cor.begin() + nBin;
-  vector<double> newVec(first, last);
+  vector<double> newVec(nBin, 0.0);
+  for (unsigned i = 0; i < nBin; ++i)
+    newVec[i] = Cor[i];
+
+  cout << "\n\n\n\n";
+  cout << newVec.size() << " vs " << Cor.size() << endl;
+  cout << "\n\n\n\n";
+
   for (auto num : newVec)
+    cout << num << " ";
+  cout << endl;
+  for (auto num : Cor)
     cout << num << " ";
   cout << endl;
   return newVec;
@@ -657,6 +639,8 @@ vector<double>  RecursiveFilter(vector<double> ar_coef, int nBins, vector<double
 
   store_vec[0] = initial_vals[1];
   store_vec[1] = initial_vals[0];
+  vector<double> result(store_vec.size() - 1);
+
   for (unsigned i = 1; i < nBins + 1; ++i) {
     if (i == 1) {
       store_vec[i] =   store_vec[i - 1] *ar_coef[0]  + store_vec[i] *  ar_coef[1];
@@ -666,8 +650,10 @@ vector<double>  RecursiveFilter(vector<double> ar_coef, int nBins, vector<double
     //cout << "value = " << store_vec[i];
   }
   // remove the first value
-  store_vec.erase(store_vec.begin());
-  return store_vec;
+  for (unsigned i = 1; i < store_vec.size(); ++i)
+    result[i - 1] = store_vec[i];
+
+  return result;
 }
 
 
@@ -729,6 +715,27 @@ MatrixXd readMatrix(const string& filename) {
   return return_mat;
 }
 
+double logdet(const MatrixXd& M, bool use_cholesky) {
+  double ld = 0;
+  if (use_cholesky) {
+    LLT<Matrix<double,Dynamic,Dynamic>> chol(M);
+    auto& U = chol.matrixL();
+    for (unsigned i = 0; i < M.rows(); ++i)
+      ld += log(U(i,i));
+    ld *= 2;
+  } else {
+    PartialPivLU<Matrix<double,Dynamic,Dynamic>> lu(M);
+    auto& LU = lu.matrixLU();
+    double c = lu.permutationP().determinant(); // -1 or 1
+    for (unsigned i = 0; i < LU.rows(); ++i) {
+      const auto& lii = LU(i,i);
+      if (lii < double(0)) c *= -1;
+      ld += log(abs(lii));
+    }
+    ld += log(c);
+  }
+  return ld;
+}
 // Utilty funciton for summing
 double Sum(vector<double> x) {
   double Total = 0.0;

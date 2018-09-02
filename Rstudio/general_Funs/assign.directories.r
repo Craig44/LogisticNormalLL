@@ -5,6 +5,8 @@ assign.directories<-function(base="")
     DIR[["Base"]]<-base
     
     DIR[["R"]]<-make.filename("Rstudio",DIR[["Base"]],T)
+    
+    DIR[["TMB"]]<-make.filename("TMB",DIR[["Base"]],T)
 
     DIR[["General fun"]]<-make.filename("general_Funs",DIR[["R"]],T)
 
