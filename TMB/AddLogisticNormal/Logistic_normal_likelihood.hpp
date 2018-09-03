@@ -13,6 +13,7 @@ matrix<Type>  covariance_logistic(Type sigma, vector<Type> phi, int N_bins, int 
 /*
  * The main functions which returns the Negative loglikelihood for the Logistic Normal according to Francis 2014
  */
+
 template <class Type>  
 Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,  Type sigma, vector<Type> phi, vector<Type> bin_labels, int ARMA) {
   int A = bin_labels.size();
@@ -82,6 +83,7 @@ Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,
     temp2 = 0.5 / (weights_by_year[year] * weights_by_year[year]);
     neg_ll_LN += (temp1.sum() * temp2);
   }
+  
   return neg_ll_LN;
 }
 
@@ -177,10 +179,7 @@ vector<Type> ARMAacf(Type AR, Type MA, int nBin) {
   int q = 1;
   vector<Type> MA_coef(1);
   MA_coef(0) = MA;
-  
-  if (!p && !q) {
-    std::cerr << "empty model supplied" << std::endl;
-  }
+
   int r = fmax(p, q + 1);
   
   vector<Type> AR_coef(1 + (r - p));
@@ -267,7 +266,7 @@ vector<Type> ARMAacf(Type AR, Type MA, int nBin) {
     else if (i == 1) {
       newVec[i] = final_acf[1];
     } else {
-      newVec[i] = Cor[i];
+      newVec[i] = Cor[i - 2];
     }
   }
   return newVec;
@@ -295,6 +294,7 @@ vector<Type> ARMAacf_non_arma(vector<Type> AR, int nBin) {
     
   }
   vector<Type> rhs(p + 1);
+  rhs.setZero();
   rhs[0] = 1.0;
   
   vector<int> seq(p + 1);
@@ -303,6 +303,10 @@ vector<Type> ARMAacf_non_arma(vector<Type> AR, int nBin) {
   }
   
   matrix<Type> A_temp(p + 1,p + 1);
+  matrix<Type> A_temp1(p + 1,p + 1);
+  A_temp.setZero();
+  A_temp1.setZero();
+  
   for (unsigned i = 0; i <= p; ++i) {
     for (unsigned j = 0; j <= p ; ++j) {
       if (j == 2)
@@ -313,20 +317,20 @@ vector<Type> ARMAacf_non_arma(vector<Type> AR, int nBin) {
   }
   for (unsigned i = 0; i <= p; ++i) {
     for (unsigned j = 0; j <= p ; ++j) {
-      A_temp(i,j) =  A_temp(seq[i],seq[j]);
+      A_temp1(i,j) =  A_temp(seq[i],seq[j]);
     }
   }
   // the bodge
-  A_temp(1,2) = 0.0;
-  Type log_det = 0.0;
-  matrix<Type>A_inv = atomic::matinvpd(A_temp,log_det);
+  A_temp1(1,2) = 0.0;
+  
+  matrix<Type>A_inv = atomic::matinv(A_temp1);
   
   
   // Take the first column of the inverted matrix
   vector<Type> final_acf(2);
   vector<Type> Acf(p + 1);
   
-  for (unsigned i = 0; i < p + 1; ++i) {
+  for (unsigned i = 0; i <= p; ++i) {
     Acf(i) = A_inv(i,0);
   }
   
@@ -344,7 +348,7 @@ vector<Type> ARMAacf_non_arma(vector<Type> AR, int nBin) {
     else if (i == 1) {
       newVec[i] = final_acf[1];
     } else {
-      newVec[i] = Cor[i];
+      newVec[i] = Cor[i - 2];
     }
   }
   return newVec;

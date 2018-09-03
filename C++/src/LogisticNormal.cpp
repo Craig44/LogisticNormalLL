@@ -575,13 +575,13 @@ vector<double> ARMAacf(vector<double> AR, int nBin) {
   for (unsigned i = 1; i <= 2; ++i) {
     final_acf.push_back(Acf[i] / Acf[0]);
   }
-/*  cout << "Final Acf" << endl;
+  cout << "Final Acf" << endl;
   for (auto num : final_acf)
     cout << num << " ";
-  cout << endl;*/
+  cout << endl;
+
 
   // Call the recurisive filter
-  xx.assign(nBin - p, 0.0);
   Cor = RecursiveFilter(AR,nBin, final_acf);
   // Add the initial coeffiecients to the beginning of the series.
   Cor.insert(Cor.begin(),final_acf[1]);

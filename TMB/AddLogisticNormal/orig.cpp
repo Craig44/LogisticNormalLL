@@ -300,14 +300,11 @@ Type objective_function<Type>::operator() () {
     true_ycs = exp(transformed_deviations - 0.5 * sigma_r * sigma_r);
 
     std::cerr << "29th dev = " << transformed_deviations(YCS.size() - 1) << std::endl;
-    
-    
     std::cerr << "sum of devs = " << sum(transformed_deviations) << std::endl;
     std::cerr << "size of devs = " << transformed_deviations.size() << std::endl;
     std::cerr << "devs = " << transformed_deviations << std::endl;
     std::cerr << "size of y = " << true_ycs.size() << std::endl;
     std::cerr << "true_ycs = " << true_ycs << std::endl;
-    
     
     if (fabs(sum(transformed_deviations)) > 0.0001)
       error("deviations are constrained to sum to 0 but this isn't the case please address");
@@ -317,7 +314,6 @@ Type objective_function<Type>::operator() () {
     true_ycs = YCS / YCS.mean();
   } 
   
-  
   /*
    * Big list of sanity checks that we would want to add to check before going anyfurtur
    */
@@ -325,13 +321,7 @@ Type objective_function<Type>::operator() () {
     error("ageing error needs to be symetric, ie rows = cols");
   if (ageing_error.rows() != A)
     error("ageing error needs to have rows and cols = number of ages this is not the case");
-    
-  
-  
-  
-  
-  
-  
+
   // Define containers that will be needed over the model life.
   // Matrix
   matrix<Type> numbers_at_age(Y+1,A);
@@ -369,7 +359,6 @@ Type objective_function<Type>::operator() () {
   Type neg_ll_survey_bio = 0;
   Type penalty = 0;
   
-
   // Begin calcualtions
 
   std::cout << "R0 q s_a50 s_ato95 f_a50 f_ato95 YCS\n";
@@ -508,6 +497,100 @@ Type objective_function<Type>::operator() () {
    * Additive Logistic Normal Likelihood
    */
   if (use_logistic_normal == 1) {
+    /*
+    int N_bins = fishery_at_age_exp_LN_test.cols();
+    matrix<Type> covar = covariance_logistic(exp(log_norm_sigma),exp(log_norm_phi),N_bins,ARMA);
+    
+    REPORT(covar);
+    vector<Type> phi = exp(log_norm_phi);
+    vector<Type> rho;
+
+    rho = ARMAacf_non_arma(phi, N_bins);
+    
+    // -------------- Debug the above function -------------------//
+    vector<Type> AR = phi;
+    int nBin = N_bins;
+    unsigned p = AR.size();
+    
+    if (p > 2) {
+      std::cerr << "This function has not been coded for more the two AR coeffs.";
+    }
+    int r = p;
+    matrix<Type> A1(p + 1,2 * p + 1);
+    A1.setZero();
+    for (unsigned i = 0; i < A1.rows(); ++i) {
+      A1(i ,i) = 1.0;
+      A1(i, i + 1) = -AR[0];
+      A1(i, i + 2) = -AR[1];
+      
+    }
+    vector<Type> rhs(p + 1);
+    rhs.setZero();
+    rhs[0] = 1.0;
+    
+    vector<int> seq(p + 1);
+    for (int i = 0; i <= p; ++i) {
+      seq[i] = (p - i);
+    }
+    
+    matrix<Type> A_temp(p + 1,p + 1);
+    matrix<Type> A_temp1(p + 1,p + 1);
+    A_temp.setZero();
+    A_temp1.setZero();
+    
+    for (unsigned i = 0; i <= p; ++i) {
+      for (unsigned j = 0; j <= p ; ++j) {
+        if (j == 2)
+          A_temp(i,j) = A1(i,j);
+        else
+          A_temp(i,j) = A1(i,j) + A1(i,2 * p  - j);
+      }
+    }
+    for (unsigned i = 0; i <= p; ++i) {
+      for (unsigned j = 0; j <= p ; ++j) {
+        A_temp1(i,j) =  A_temp(seq[i],seq[j]);
+      }
+    }
+    // the bodge
+    A_temp1(1,2) = 0.0;
+    
+    matrix<Type>A_inv = atomic::matinv(A_temp1);
+    
+    REPORT(A_inv);
+    
+    // Take the first column of the inverted matrix
+    vector<Type> final_acf(2);
+    vector<Type> Acf(p + 1);
+    
+    for (unsigned i = 0; i <= p; ++i) {
+      Acf(i) = A_inv(i,0);
+    }
+    
+    // Divide the last two elements by the first element.
+    for (unsigned i = 1; i <= 2; ++i) {
+      final_acf(i - 1) = (Acf[i] / Acf[0]);
+    }
+    
+    //cout << "solution = " << x << endl;
+    vector<Type> Cor = RecursiveFilter(AR, nBin, final_acf);
+    REPORT(Cor);
+    REPORT(final_acf);
+    REPORT(Acf);
+    
+    vector<Type> newVec(nBin);
+    for (unsigned i = 0; i < nBin; ++i) {
+      if (i == 0)
+        newVec[i] = final_acf[0];
+      else if (i == 1) {
+        newVec[i] = final_acf[1];
+      } else {
+        newVec[i] = Cor[i - 2];
+      }
+    }
+    
+    
+    REPORT(rho);
+    */
     /*
     int N_bins = fishery_at_age_exp_LN_test.cols();
     matrix<Type> covar;

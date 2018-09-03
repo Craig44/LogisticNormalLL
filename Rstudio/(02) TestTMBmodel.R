@@ -4,7 +4,6 @@
 ## @Description
 ## Compare my TMB model against the original script for unsexed comp data, as my TMB model is unsexed at them moment
 
-
 ## Add Libraries
 library(TMB)
 library(TMBdebug) # to stop windows from crashing
@@ -15,9 +14,7 @@ setwd("C:/Work/Projects/PhD/Logistic_normal/Rstudio");
 source("Chris_original_code.r")
 source("Initialisation.r");
 
-
 Hak  = extract.fits(path = DIR$'csl_files', file = "HAK.log");
-
 
 #########
 ## HAK
@@ -47,6 +44,8 @@ setwd("AddLogisticNormal")
 compile("orig.cpp")
 dyn.load(dynlib("orig"))
 
+
+
 load(file = make.filename(file = "tmb.RData", path = DIR$TMB))
 
 ## add the new switches
@@ -62,6 +61,8 @@ data$fishery_years = as.numeric(rownames(compdat$obs))
 data$fishery_at_age_exp_LN_test = compdat$exp;
 data$fishery_at_age_error_LN_test = compdat$N;
 data$use_logistic_normal = 1;
+data$ARMA = 0;
+
 unit_YCS = rep(1,length(data$years))
 YCS_start = rep(0,length(data$years) - 1)
 pars = list(log_R0 = 18, q = 0.2, s_a50 = 3, s_ato95 = 3, f_a50 = 3, f_ato95 = 3, log_sigma_r = log(0.5), YCS = YCS_start, log_norm_sigma = 0.1, log_norm_phi = c(-0.5,-0.5))
@@ -78,8 +79,8 @@ phi = c(0.2)
 pars$log_norm_sigma = log(sigma);
 pars$log_norm_phi = log(phi);
 data$ARMA = 0;
-obj <- MakeADFun(data=data,parameters=pars, DLL = "orig")
-obj_run = obj$report()
+obj <- MakeADFun(data=data,parameters=pars, DLL = "orig");
+obj_run = obj$report();
 true_results = vector();
 tmb_results = vector();
 true_results[1] = NLLlogistnorm(compdat,sigma = sigma,phi,covmat=NULL,sepbysex=sepbysex, sexlag=sexlag, robust=robust, ARMA=ARMA)
@@ -111,7 +112,7 @@ true_results[4] = NLLlogistnorm(compdat,sigma = sigma,phi,covmat=NULL,sepbysex=s
 tmb_results[4] = obj_run$neg_ll_fishery_age
 
 ARMA = TRUE
-data$ARMA = 0;
+data$ARMA = 1;
 obj <- MakeADFun(data=data,parameters=pars, DLL = "orig")
 obj_run = obj$report()
 true_results[5] = NLLlogistnorm(compdat,sigma = sigma,phi,covmat=NULL,sepbysex=sepbysex, sexlag=sexlag, robust=robust, ARMA=ARMA)
