@@ -1,5 +1,7 @@
 #include <TMB.hpp>
 #include "Logistic_normal_likelihood.hpp"
+//#include "Comp_ll.hpp"
+
 
 // Square a quantity
 template <class Type> 
@@ -73,7 +75,7 @@ Type BevertonHolt(Type SSB, Type B0, Type h) {
 // objective calculations, from CASAL
 // returns negative log-likelihood.
 template <class Type> 
-Type obj_multinomal_casal_log(array<Type> obs, matrix<Type> Exp, vector<Type> error) {
+Type obj_multinomal_casal_log(array<Type>& obs, matrix<Type>& Exp, vector<Type>& error) {
   std::cout << "obj_multinomal_casal_log\n";
   int Y = Exp.rows();
   int A = Exp.cols();
@@ -90,7 +92,7 @@ Type obj_multinomal_casal_log(array<Type> obs, matrix<Type> Exp, vector<Type> er
 
 // return pearsons residuals
 template <class Type> 
-array<Type> pearsons_resids_multinomial(array<Type> obs, matrix<Type> Exp, vector<Type> error) {
+array<Type> pearsons_resids_multinomial(array<Type>& obs, matrix<Type>& Exp, vector<Type>& error) {
   int Y = Exp.rows();
   int A = Exp.cols();
   array<Type> resids(obs);
@@ -190,6 +192,9 @@ Type objective_function<Type>::operator() () {
   int A = ages.size();
   // Observations  
   DATA_ARRAY(fishery_at_age_obs);
+  DATA_MATRIX(fishery_at_age_exp_LN_test);
+  DATA_VECTOR(fishery_at_age_error_LN_test);
+  
   DATA_VECTOR(fishery_at_age_error);
   DATA_ARRAY(survey_at_age_obs);
   DATA_VECTOR(survey_at_age_error);
@@ -198,7 +203,8 @@ Type objective_function<Type>::operator() () {
   DATA_VECTOR(fishery_years);
   DATA_VECTOR(survey_years);
   DATA_MATRIX(ageing_error);
-
+  
+  
   // Biological parameters.
   DATA_SCALAR(h);// Steepnees
   DATA_SCALAR(a);// a in the mean weight calculation
@@ -215,9 +221,7 @@ Type objective_function<Type>::operator() () {
   DATA_INTEGER(standardise_ycs); // // 0 = no,1 = yes apply standardisation on YCS
   DATA_INTEGER(simplex);  // // 0 = no,1 = yes apply the simplex transformation on YCS
   DATA_INTEGER(deviations); // // 0 = no,1 = yes YCS or devs, if devs it is assumed that they YCS vector are constrained sum = 0
-  DATA_INTEGER(use_logistic_normal); //should comp data be modelled by the logistic normal
-  DATA_INTEGER(ARMA); // Specifies a certain correlation structure in the covariance.
-  int LN_resids_centered = 1; // could not get un-centred standardised residuals. 
+  
   
   DATA_VECTOR(untransformed_values); // The starting values if doing the simplex transformation
   
@@ -231,7 +235,8 @@ Type objective_function<Type>::operator() () {
   // Priors/penalties
   DATA_INTEGER(catch_penalty_log_space); // penalty flag
   DATA_INTEGER(apply_priors); // Do we want to apply priors/penalties to YCS and or Q's
-
+  DATA_INTEGER(use_logistic_normal); //should comp data be modelled by the logistic normal
+  
   DATA_SCALAR(mu_q);
   DATA_SCALAR(sigma_q);
   
@@ -250,12 +255,9 @@ Type objective_function<Type>::operator() () {
   PARAMETER(f_ato95);
   PARAMETER(log_sigma_r);
   PARAMETER_VECTOR(YCS);
-    // Logistic normal values
-  PARAMETER(log_norm_sigma_fishery);
-  PARAMETER_VECTOR(log_norm_phi_fishery);
-  
-  PARAMETER(log_norm_sigma_survey);
-  PARAMETER_VECTOR(log_norm_phi_survey);
+  // Logistic normal values
+  PARAMETER(log_norm_sigma);
+  PARAMETER_VECTOR(log_norm_phi);
   /*
    * Transformations
    */
@@ -302,11 +304,14 @@ Type objective_function<Type>::operator() () {
     true_ycs = exp(transformed_deviations - 0.5 * sigma_r * sigma_r);
 
     std::cerr << "29th dev = " << transformed_deviations(YCS.size() - 1) << std::endl;
+    
+    
     std::cerr << "sum of devs = " << sum(transformed_deviations) << std::endl;
     std::cerr << "size of devs = " << transformed_deviations.size() << std::endl;
     std::cerr << "devs = " << transformed_deviations << std::endl;
     std::cerr << "size of y = " << true_ycs.size() << std::endl;
     std::cerr << "true_ycs = " << true_ycs << std::endl;
+    
     
     if (fabs(sum(transformed_deviations)) > 0.0001)
       error("deviations are constrained to sum to 0 but this isn't the case please address");
@@ -316,25 +321,6 @@ Type objective_function<Type>::operator() () {
     true_ycs = YCS / YCS.mean();
   } 
   
-  // Transform LN correlation parameters
-  vector<Type> transformed_phi_fishery(log_norm_phi_fishery.size());
-  vector<Type> transformed_phi_survey(log_norm_phi_survey.size());
-  if (use_logistic_normal == 1) {
-    transformed_phi_fishery = exp(log_norm_phi_fishery);
-    transformed_phi_survey = exp(log_norm_phi_survey);
-    if (log_norm_phi_survey.size() == 2 & ARMA == 0) {
-      Type temp_val = -1 + (2 - abs(transformed_phi_survey(0))) * transformed_phi_survey(1);
-      transformed_phi_survey(1) = temp_val;
-    }
-    if (transformed_phi_fishery.size() == 2 & ARMA == 0) {
-      Type temp_val = -1 + (2 - abs(transformed_phi_fishery(0))) * transformed_phi_fishery(1);
-      transformed_phi_fishery(1) = temp_val;
-    }
-  }
-
-  
-  
-  
   
   /*
    * Big list of sanity checks that we would want to add to check before going anyfurtur
@@ -343,7 +329,12 @@ Type objective_function<Type>::operator() () {
     error("ageing error needs to be symetric, ie rows = cols");
   if (ageing_error.rows() != A)
     error("ageing error needs to have rows and cols = number of ages this is not the case");
-
+    
+  
+  
+  
+  
+  
   
   // Define containers that will be needed over the model life.
   // Matrix
@@ -382,6 +373,7 @@ Type objective_function<Type>::operator() () {
   Type neg_ll_survey_bio = 0;
   Type penalty = 0;
   
+
   // Begin calcualtions
 
   std::cout << "R0 q s_a50 s_ato95 f_a50 f_ato95 YCS\n";
@@ -516,41 +508,29 @@ Type objective_function<Type>::operator() () {
     }
 
   }
-  /*
-   * Additive Logistic Normal Likelihood
-   */
   if (use_logistic_normal == 1) {
-    neg_ll_fishery_age = NLLlogistnorm(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error, exp(log_norm_sigma_fishery), transformed_phi_fishery, ages, ARMA);
-    neg_ll_survey_age = NLLlogistnorm(survey_at_age_obs, survey_age_expectations, survey_at_age_error, exp(log_norm_sigma_survey), transformed_phi_survey, ages, ARMA);
-    fishery_age_pred *= logis_norm_stand_resids(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error, exp(log_norm_sigma_fishery), transformed_phi_fishery, ages, ARMA, LN_resids_centered);
-    survey_age_pred *= logis_norm_stand_resids(survey_at_age_obs, survey_age_expectations, survey_at_age_error, exp(log_norm_sigma_survey), transformed_phi_survey, ages, ARMA, LN_resids_centered);
-
-    // Lets imagine we want to simulate some data.
-    SIMULATE {
-      matrix<Type> simulated_fishery_comp(fishery_at_age_obs.rows(),fishery_at_age_obs.cols());
-      simulated_fishery_comp.setZero();
-      matrix<Type> logistic_covariance = covariance_logistic(exp(log_norm_sigma_fishery),transformed_phi_fishery,fishery_age_expectations.cols(),ARMA);
-      using namespace density;
-      MVNORM_t<Type> simulator(logistic_covariance);      
-      for (int y = 0; y < fishery_at_age_obs.rows(); ++y) {
-        vector<Type> normal_data = simulator.simulate() + log(vector<Type>(fishery_age_expectations.row(y)));
-        
-      }
-      
-    }
-    
-    
-    } else {
-    neg_ll_survey_age = obj_multinomal_casal_log(survey_at_age_obs, survey_age_expectations, survey_at_age_error);
+    //matrix<Type> temp = fishery_at_age_obs.matrix();
+    //matrix<Type> temp1 = fishery_age_expectations.matrix();
+    //Type value = NLLlogistnorm(fishery_at_age_obs,fishery_at_age_exp_LN_test,fishery_at_age_error_LN_test,log_norm_sigma, ages);
+    /*
+    bool sepbysex = false;
+    bool sexlag = false; 
+    bool robust = false;
+    bool ARMA = false;
+     */
+    //neg_ll_fishery_age = NLLlogistnorm(fishery_at_age_obs.matrix(), fishery_age_expectations, fishery_at_age_error,  log_norm_sigma, log_norm_phi , sepbysex, sexlag, robust, ARMA, ages);
+  } else {
+    std::cout << fishery_at_age_obs.rows() << " " << fishery_at_age_obs.cols() << " exp rows = " << fishery_age_expectations.rows() << " " << fishery_age_expectations.cols() << " error = " << fishery_at_age_error.size() << "\n";
     neg_ll_fishery_age = obj_multinomal_casal_log(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error);
-    fishery_age_pred *= pearsons_resids_multinomial(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error);
-    survey_age_pred *= pearsons_resids_multinomial(survey_at_age_obs, survey_age_expectations, survey_at_age_error);
-    
+    neg_ll_survey_age = obj_multinomal_casal_log(survey_at_age_obs, survey_age_expectations, survey_at_age_error);
   }
+  
   neg_ll_survey_bio = obj_lognomal_like(survey_biomass_obs, survey_biomass_expectations, survey_biomass_error);
   
   // Calculate residuals
-  survey_biomass_pred *= norm_resids_lognormal(survey_biomass_obs, survey_biomass_expectations, survey_biomass_error);
+  fishery_age_pred = pearsons_resids_multinomial(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error);
+  survey_age_pred = pearsons_resids_multinomial(survey_at_age_obs, survey_age_expectations, survey_at_age_error);
+  survey_biomass_pred = norm_resids_lognormal(survey_biomass_obs, survey_biomass_expectations, survey_biomass_error);
   /* 
    *  ===============
    *  Report section
@@ -572,11 +552,6 @@ Type objective_function<Type>::operator() () {
   REPORT(survey_biomass_expectations);
   REPORT(survey_age_expectations);
   REPORT(fishery_age_expectations);
-  
-  REPORT(fishery_age_pred);
-  REPORT(survey_age_pred);
-  REPORT(survey_biomass_pred);
-  
   
   REPORT(neg_ll_fishery_age);
   REPORT(neg_ll_survey_bio);
@@ -616,5 +591,8 @@ Type objective_function<Type>::operator() () {
   }
   return neg_ll;
 }
+
+
+
 
 //gdbsource("my_project.R")

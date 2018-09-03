@@ -1,5 +1,17 @@
 // A TMB template script to calculate the negative loglikelihood
-// and simulate from a Logistic Normal likelihood
+// and standardised residuals from a Logistic Normal likelihood
+// According to RICC "Francis 2014 Replacing the multinomial in stock assessment models: A first step"
+// @author C.Marsh
+// @date 3/9/2018
+// Conditions for testing a desired correlation structure
+// LN1 => phi.size() == 1 && phi(0) == 0
+// LN2 => phi.size() == 1 && phi(0) != 0
+// LN3 => phi.size() == 2 ARMA == 0
+// LN3m => phi.size() == 2 ARMA == 1
+
+// Warning I have read that using parameters or derived parameters in if() statements is dangerous
+// I have tested most of these functions and I don't think the optimiser has removed these if() statements
+// However if anyone uses this be aware and please triple check output.
 
 // Forward Declaration of functions that are used in NLLlogistnorm and described below the NLLlogistnorm function
 template <class Type> 
@@ -39,13 +51,9 @@ Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,
   V_mat.setZero();
   matrix<Type> ww(N_bins,N_bins - 1);
   ww.setZero();
-  //for (int a =0; a < N_bins; ++a)
-  // logistic_covariance(a,a) = sigma * sigma;
-  
+
   logistic_covariance = covariance_logistic(sigma,phi,N_bins,ARMA);
-  // Get the covariance matrix with given parameters Sigma, phi and ARMA
-  //logistic_covariance = covariance_logistic(sigma,phi,N_bins,ARMA);
-  
+
   for (int i = 0; i < (N_bins - 1); ++i) {
     k_mat(i,i) = 1.0;
     k_mat(i, A - 1) = -1.0;
@@ -85,6 +93,91 @@ Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,
   }
   
   return neg_ll_LN;
+}
+
+
+/*
+ * The main functions returns a matrix of standardised residuals according to Francis 2014 these are centred "I could not figure out how to go about non-centred"
+ */
+template <class Type>  
+array<Type> logis_norm_stand_resids(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,  Type sigma, vector<Type> phi, vector<Type> bin_labels, int ARMA, int centered) {
+  int A = bin_labels.size();
+  int Y = exp_mat.rows();
+  int N_bins = exp_mat.cols();
+  
+  vector<Type> weights_by_year(exp_mat.rows());
+  Type mean_N = N.mean();
+  // Calculate a weights that are essentially scaled N
+  for (int this_N = 0; this_N < N.size();++this_N) {
+    weights_by_year[this_N] = sqrt(mean_N/N[this_N]);
+  }
+  
+  // Initialise some matricies
+  matrix<Type> logistic_covariance(N_bins,N_bins);
+  logistic_covariance.setZero();
+  matrix<Type> k_mat(N_bins - 1,N_bins);
+  k_mat.setZero();
+  matrix<Type> V_mat(N_bins - 1,N_bins);
+  V_mat.setZero();
+  logistic_covariance = covariance_logistic(sigma,phi,N_bins,ARMA);
+  
+  for (int i = 0; i < (N_bins - 1); ++i) {
+    k_mat(i,i) = 1.0;
+    k_mat(i, N_bins - 1) = -1.0;
+  }
+  matrix<Type> t_kmat = logistic_covariance * k_mat.transpose();
+  
+  V_mat = k_mat * t_kmat;
+  
+  if (centered == 1) {
+    matrix<Type> FF(V_mat.rows(),exp_mat.cols());
+    matrix<Type> H(V_mat.rows(),V_mat.cols());
+    H.setOnes();
+    FF.setZero();
+    for (int i = 0; i < (N_bins - 1); ++i) {
+      FF(i,i) = 1.0;
+      FF(i, N_bins - 1) = 1.0;
+      H(i,i) = 2.0;
+    }
+    matrix<Type> Hinv = atomic::matinv(H);
+    matrix<Type> FHinv = FF.transpose() * Hinv;
+    matrix<Type> Gam = FHinv * (V_mat * FHinv.transpose());
+    vector<Type> diag = Gam.diagonal();
+    vector<Type> sq_diag = sqrt(diag);
+    matrix<Type> sdmat(exp_mat.rows(),exp_mat.cols());
+    sdmat.setZero();
+    for (int i = 0; i < Y; ++i)
+      sdmat.row(i) = sq_diag * weights_by_year[i];
+    
+    array<Type> sres(exp_mat.rows(),exp_mat.cols());
+    sres.setZero();
+    Type Power = Type(1 / Type(obs_mat.cols()));
+    for (int i = 0; i < Y; ++i) {
+      Type obs_geo_mean = pow(vector<Type>(obs_mat.matrix().row(i)).prod(), Power);
+      Type exp_geo_mean = pow(vector<Type>(exp_mat.row(i)).prod(),Power);
+      for (int a = 0; a < N_bins; ++a) {
+        sres(i,a) = (log(obs_mat(i,a) / obs_geo_mean) - log(exp_mat(i,a) / exp_geo_mean)) / sdmat(i,a);
+      }
+    }
+    return sres;
+  } else {
+    vector<Type> diag = V_mat.diagonal();
+    vector<Type> sq_diag = sqrt(diag);
+    matrix<Type> sdmat(exp_mat.rows(),V_mat.cols());
+    sdmat.setZero();
+    
+    for (int i = 0; i < Y; ++i)
+      sdmat.row(i) = sq_diag * weights_by_year[i];
+    array<Type> sres(exp_mat.rows(),V_mat.cols());
+    sres.setZero();
+    for (int i = 0; i < Y; ++i) {
+      for (int a = 0; a < V_mat.cols(); ++a) {
+        sres(i,a) = (log(obs_mat(i,a)) - obs_mat(i,(N_bins - 1))-log(exp_mat(i,a)/exp_mat(i,(N_bins - 1)))) / sdmat(i,a);
+      }
+    }
+    return sres;
+  }
+  return 0;
 }
 
 /**

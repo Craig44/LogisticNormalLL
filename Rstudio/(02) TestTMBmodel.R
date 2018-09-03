@@ -49,9 +49,10 @@ dyn.load(dynlib("orig"))
 load(file = make.filename(file = "tmb.RData", path = DIR$TMB))
 
 ## add the new switches
-data$survey_at_age_obs = Obs_data$obs;
-data$survey_at_age_error = Obs_data$N;
+data$survey_at_age_obs = compdat$obs;
+data$survey_at_age_error = compdat$N;
 data$survey_years = as.numeric(rownames(data$survey_at_age_obs))
+data$survey_biomass_obs
 
 data$ages = 1:19
 data$ageing_error = matrix(0,length(data$ages),length(data$ages))
@@ -97,7 +98,8 @@ sigma = 0.4;
 phi = c(0.2,0.5)
 pars$log_norm_sigma = log(sigma);
 pars$log_norm_phi = log(phi);
-obj <- MakeADFun(data=data,parameters=pars, DLL = "orig")
+obj <- MakeADFu
+n(data=data,parameters=pars, DLL = "orig")
 obj_run = obj$report()
 true_results[3] = NLLlogistnorm(compdat,sigma = sigma,phi,covmat=NULL,sepbysex=sepbysex, sexlag=sexlag, robust=robust, ARMA=ARMA)
 tmb_results[3] = obj_run$neg_ll_fishery_age
@@ -120,3 +122,18 @@ tmb_results[5] = obj_run$neg_ll_fishery_age
 
 true_results - C_results
 cbind(true_results, t(C_results),tmb_results,true_results -t(C_results))
+
+### ------------------ Compare residuals -------------------##
+compdat
+Sres.logistnorm(compdat,sigma = sigma,phi, sepbysex=sepbysex, sexlag=sexlag, ARMA=ARMA)
+
+
+
+
+
+
+
+
+
+
+

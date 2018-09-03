@@ -505,9 +505,14 @@ function(compdat,sigma,phi,centred=T,sepbysex=F,sexlag=F,
     if(ncol(expprop)!=Nbin)stop('Wrong size for expprop')
     covmat <- covmat.logistnorm(sigma,phi,colnames(expprop),
                                 sepbysex,sexlag,ARMA)
-    wts <- if(length(compdat$N)!=0)sqrt(mean(compdat$N)/compdat$N) else rep(1,
-                    Nyear)
-    if(length(wts)==1)wts <- rep(1,Nyear)
+    wts <- if(length(compdat$N)!=0) {
+      sqrt(mean(compdat$N)/compdat$N) 
+    } else {
+      rep(1,Nyear)
+    }
+    if(length(wts)==1)
+      wts <- rep(1,Nyear)
+    
     Kmat <- cbind(diag(Nbin-1),-1)
     Vmat <- Kmat %*% (covmat %*% t(Kmat))
     if(centred){
