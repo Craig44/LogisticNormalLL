@@ -267,7 +267,7 @@ vector<Type>  RecursiveFilter(vector<Type> ar_coef, int nBins, vector<Type> init
 */
 template <class Type> 
 vector<Type> ARMAacf(Type AR, Type MA, int nBin) {
-  std::cout << "Beginning method ARMAacf() " << std::endl;
+  //std::cout << "Beginning method ARMAacf() " << std::endl;
   int p = 1;
   int q = 1;
   vector<Type> MA_coef(1);

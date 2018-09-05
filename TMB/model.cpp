@@ -7,13 +7,6 @@ Type square(Type x){
   return x*x;
 }
 
-// Logistic transform
-template <class Type> 
-Type logistic_transform(Type x) {
-  return Type(2)/(Type(1) + exp(-Type(2) * x)) - Type(1);
-}
-
-
 // Zerofun functions
 template <class Type> 
 Type ZeroFun(Type x, Type delta) {
@@ -22,12 +15,18 @@ Type ZeroFun(Type x, Type delta) {
   
   return delta / (2.0 - (x / delta));
 }
+// Logistic transform
+template <class Type> 
+Type logistic_transform(Type x) {
+  return Type(2)/(Type(1) + exp(-Type(2) * x)) - Type(1);
+}
+
 
 
 // logistic ogive function
 template <class Type> 
 vector<Type> logistic_ogive(vector<Type> ages, Type sel_50, Type sel_95) {
-  std::cout << "logistic_ogive\n";
+  //std::cout << "logistic_ogive\n";
   int n_ages = ages.size();
   vector<Type> logis(n_ages);
   for (int age = 0;  age < n_ages; ++age) {
@@ -39,7 +38,7 @@ vector<Type> logistic_ogive(vector<Type> ages, Type sel_50, Type sel_95) {
 // Weight at age
 template <class Type> 
 vector<Type> mean_weight_at_age(vector<Type> L_a, Type a, Type b) {
-  std::cout << "mean_weight\n";
+  //std::cout << "mean_weight\n";
   int n_ages = L_a.size();
   vector<Type> W_a(n_ages);
   for (int age = 0;  age < n_ages; ++age) {
@@ -51,7 +50,7 @@ vector<Type> mean_weight_at_age(vector<Type> L_a, Type a, Type b) {
  // Length at age
  template <class Type> 
  vector<Type> VonBertalanffy(vector<Type>& ages, Type& L_inf, Type& k, Type& t0) {
-   std::cout << "VB\n";
+   //std::cout << "VB\n";
    int n_ages = ages.size();
    vector<Type> L_a(n_ages);
    for (int age = 0;  age < n_ages; ++age) {
@@ -74,7 +73,7 @@ Type BevertonHolt(Type SSB, Type B0, Type h) {
 // returns negative log-likelihood.
 template <class Type> 
 Type obj_multinomal_casal_log(array<Type> obs, matrix<Type> Exp, vector<Type> error) {
-  std::cout << "obj_multinomal_casal_log\n";
+  //std::cout << "obj_multinomal_casal_log\n";
   int Y = Exp.rows();
   int A = Exp.cols();
   Type obj = 0.0;
@@ -105,7 +104,7 @@ array<Type> pearsons_resids_multinomial(array<Type> obs, matrix<Type> Exp, vecto
 // negative log likelihood for the lognormal distribution
 template <class Type> 
 Type obj_lognomal_like(vector<Type> observed, vector<Type> expected, vector<Type> error) {
-  std::cout << "obj_lognomal_like\n";
+  //std::cout << "obj_lognomal_like\n";
   int n_years = observed.rows();
   vector<Type> sigma(n_years);
   vector<Type> score(n_years);
@@ -145,7 +144,7 @@ Type lnorm_prior(Type X, Type Expectation, Type sigma) {
 // simplex_jacobian - calculate the jacobian for estiamting the logistic simplex rather than the simplex
 template <class Type> 
 Type simplex_jacobian(vector<Type> zk, vector<Type> X_orig) {
-  std::cout << "Simplex Jacobian\n";
+  //std::cout << "Simplex Jacobian\n";
   Type Jacobian = 1.0;
   for (int k = 0; k < (zk.size() - 1); ++k) { // because I store zk in a matrix with xk in simplex_restore() the zk vector has one more null/empty element than it should have so we don't iterate over this.
     if (k == 0) {
@@ -161,7 +160,6 @@ Type simplex_jacobian(vector<Type> zk, vector<Type> X_orig) {
 // recent update value.
 template <class Type>
 matrix<Type> Simplex_restore(vector<Type> logit_unit_vec, vector<Type> last_unit_vec) {
-  std::cout << "Simplex_restore\n";
   int n_pars = last_unit_vec.size();
   matrix<Type> matrix_return(2,n_pars);
   for (int k = 0; k < (logit_unit_vec.size()); ++k) {
@@ -173,10 +171,8 @@ matrix<Type> Simplex_restore(vector<Type> logit_unit_vec, vector<Type> last_unit
       matrix_return(1,k) = (Type(1) - sum(vector<Type>(last_unit_vec.segment(0,k)))) * matrix_return(0,k);
     //std::cerr << "k = " << k + 1 << " zk = " << matrix_return(0,k) << " xk = " << matrix_return(1,k) << std::endl; // Output warning
   }
-  //std::cerr << vector<Type>(matrix_return.row(1)) << std::endl;
   matrix_return(1,last_unit_vec.size() - 1) = 1 - sum(vector<Type>(matrix_return.row(1)));
-  //std::cerr << vector<Type>(matrix_return.row(1)) << std::endl;
-  
+
   return matrix_return;
 }
 
@@ -200,15 +196,15 @@ Type objective_function<Type>::operator() () {
   DATA_MATRIX(ageing_error);
 
   // Biological parameters.
-  DATA_SCALAR(h);// Steepnees
-  DATA_SCALAR(a);// a in the mean weight calculation
-  DATA_SCALAR(b);// b in the mean weight calculation
-  DATA_SCALAR(L_inf);// L_inf in the Von Bertallanffy equation
-  DATA_SCALAR(k);// k in the Von Bertallanffy equation
-  DATA_SCALAR(t0);// t0 in the Von Bertallanffy equation
+  DATA_SCALAR(steepness);// Steepnees
+  DATA_SCALAR(a_weight);// a in the mean weight calculation
+  DATA_SCALAR(b_weight);// b in the mean weight calculation
+  DATA_SCALAR(L_inf_vb);// L_inf in the Von Bertallanffy equation
+  DATA_SCALAR(k_vb);// k in the Von Bertallanffy equation
+  DATA_SCALAR(t0_vb);// t0 in the Von Bertallanffy equation
   DATA_SCALAR(mat_a50);// Maturity Parameters
   DATA_SCALAR(mat_ato95);// Maturity Parameters
-  DATA_SCALAR(M);
+  DATA_SCALAR(M_mort);
   
   // Other flags and variables
   DATA_INTEGER(ycs_prior_applies_to_constrained);// 0 = no,1 = yes priors apply to constrained or unconstrained parameters.
@@ -286,13 +282,9 @@ Type objective_function<Type>::operator() () {
     untransformed_values = vector<Type>(untransformed_simplex.row(1));
     
     true_ycs = untransformed_values * Type(Y);
-    std::cerr << true_ycs << std::endl;
-    std::cerr << true_ycs.size() << std::endl;
-    //return 0;
   }
   vector<Type> transformed_deviations(Y);
   if (deviations == 1) {
-    std::cerr << "ycs = " << (YCS.size() + 1) << " Y = " << Y << std::endl;
     if ((YCS.size() + 1) != Y) 
       error("you must supply one less deviation than year, as it is constrained");
     for (int i = 0; i < (YCS.size()); ++i) {
@@ -301,13 +293,6 @@ Type objective_function<Type>::operator() () {
     transformed_deviations(YCS.size()) = -sum(YCS);
     true_ycs = exp(transformed_deviations - 0.5 * sigma_r * sigma_r);
 
-    std::cerr << "29th dev = " << transformed_deviations(YCS.size() - 1) << std::endl;
-    std::cerr << "sum of devs = " << sum(transformed_deviations) << std::endl;
-    std::cerr << "size of devs = " << transformed_deviations.size() << std::endl;
-    std::cerr << "devs = " << transformed_deviations << std::endl;
-    std::cerr << "size of y = " << true_ycs.size() << std::endl;
-    std::cerr << "true_ycs = " << true_ycs << std::endl;
-    
     if (fabs(sum(transformed_deviations)) > 0.0001)
       error("deviations are constrained to sum to 0 but this isn't the case please address");
   }
@@ -384,12 +369,12 @@ Type objective_function<Type>::operator() () {
   
   // Begin calcualtions
 
-  std::cout << "R0 q s_a50 s_ato95 f_a50 f_ato95 YCS\n";
-  std::cout << R0 << " " << q << " " << s_a50 << " " << s_ato95 << " " << f_a50 << " " << f_ato95 << " " << YCS << "\n";
+  //std::cout << "R0 q s_a50 s_ato95 f_a50 f_ato95 YCS\n";
+  //std::cout << R0 << " " << q << " " << s_a50 << " " << s_ato95 << " " << f_a50 << " " << f_ato95 << " " << YCS << "\n";
 
   // Do preliminary calculations
-  length_at_age = VonBertalanffy(ages, L_inf, k, t0);
-  weight_at_age = mean_weight_at_age(length_at_age, a, b);
+  length_at_age = VonBertalanffy(ages, L_inf_vb, k_vb, t0_vb);
+  weight_at_age = mean_weight_at_age(length_at_age, a_weight, b_weight);
   fish_select_at_age = logistic_ogive(ages, f_a50, f_ato95);
   maturity_at_age = logistic_ogive(ages, mat_a50, mat_ato95);
   survey_select_at_age = logistic_ogive(ages, s_a50, s_ato95);
@@ -402,12 +387,12 @@ Type objective_function<Type>::operator() () {
   //
   numbers_at_age(0,0) = R0;
   for(int age = 1; age < (A - 1); ++age) {
-    numbers_at_age(0, age) = numbers_at_age(0, age - 1) * exp(-M);
+    numbers_at_age(0, age) = numbers_at_age(0, age - 1) * exp(-M_mort);
   }
-  numbers_at_age(0,A - 1) =  numbers_at_age(0,A - 2) * exp(-M) / (1 - exp(-M));
+  numbers_at_age(0,A - 1) =  numbers_at_age(0,A - 2) * exp(-M_mort) / (1 - exp(-M_mort));
   pre_B0 = sum(vector<Type>(vector<Type>(numbers_at_age.row(0)) * maturity_at_age * weight_at_age));
   temp_partition = numbers_at_age.row(0);
-  numbers_at_age.row(0) = temp_partition * exp(-M);
+  numbers_at_age.row(0) = temp_partition * exp(-M_mort);
   vector<Type> initial = numbers_at_age.row(0);
   B0 = pre_B0 + (sum(vector<Type>(vector<Type>(numbers_at_age.row(0)) * maturity_at_age * weight_at_age)) - pre_B0) * proportion_mortality_spawning;
   
@@ -431,7 +416,7 @@ Type objective_function<Type>::operator() () {
     if (t == 0) {
       recruits(t) = R0 * true_ycs(t);
     } else {
-      recruits(t) = R0 * BevertonHolt(SSB(t-1), B0, h) * true_ycs(t);
+      recruits(t) = R0 * BevertonHolt(SSB(t-1), B0, steepness) * true_ycs(t);
     }
     numbers_at_age(t + 1, 0) = recruits(t);
     
@@ -445,11 +430,12 @@ Type objective_function<Type>::operator() () {
     ///////////////////
     // Mortality
     ///////////////////
-    vulnerable[t] = sum(vector<Type>(vector<Type>(numbers_at_age.row(t + 1)) * exp(-0.5 * M) * fish_select_at_age * weight_at_age));
+    vulnerable[t] = sum(vector<Type>(vector<Type>(numbers_at_age.row(t + 1)) * exp(-0.5 * M_mort) * fish_select_at_age * weight_at_age));
     // Calculate u_obs for each fishery, this is defined as the maximum proportion of fish taken from any element of the partition
     u_obs = max(vector<Type>((catches(t) / vulnerable(t)) * fish_select_at_age));
     
     // Uobs is just for reporting and comparing with u_max
+    
     if (u_obs > u_max) {
       exploitation(t) = (catches(t) / vulnerable(t)) * (u_max / u_obs);
       //flag_catch_penalty = 1.0;
@@ -461,6 +447,7 @@ Type objective_function<Type>::operator() () {
         penalty += pow(catches(t) - actual_catches(t),2); 
       }
     } else {
+     
       exploitation(t) = u_obs;
       actual_catches(t) = catches(t);
       u_obs = catches(t) / vulnerable(t);
@@ -471,24 +458,26 @@ Type objective_function<Type>::operator() () {
     ///////////////////
     for (int i = 0; i < fishery_years.size();++i) {
       if (fishery_years(i) == years(t)) {
-        fishery_age_expectations.row(i) = vector<Type>(vector<Type>(numbers_at_age.row(t + 1)) * u_obs * fish_select_at_age * exp(-M * 0.5));
+        fishery_age_expectations.row(i) = vector<Type>(vector<Type>(numbers_at_age.row(t + 1)) * u_obs * fish_select_at_age * exp(-M_mort * 0.5));
         // TODO add ageing error here
         vector<Type> numbers_at_age_with_error(A);
+        numbers_at_age_with_error.setZero();
         temp_partition = fishery_age_expectations.row(i);
         
-        for (int j = 0; j < A; ++j) {
-          for (int p = 0; p < A; ++p) {
-            numbers_at_age_with_error[p] += temp_partition(j) * ageing_error(j,p);
+        for (int a1 = 0; a1 < A; ++a1) {
+          for (int a2 = 0; a2 < A; ++a2) {
+            numbers_at_age_with_error[a2] += temp_partition(a1) * ageing_error(a1,a2);
           }
         }
         temp_partition = numbers_at_age_with_error;
+        
         fishery_age_expectations.row(i) = temp_partition / sum(temp_partition);
       }
     }
     
     // apply the mortality
     temp_partition = numbers_at_age.row(t + 1);
-    numbers_at_age.row(t + 1) = vector<Type>(temp_partition * exp(-M) * (1 - u_obs * fish_select_at_age));
+    numbers_at_age.row(t + 1) = vector<Type>(temp_partition * exp(-M_mort) * (1 - u_obs * fish_select_at_age));
     
     
     // Calculate SSB which is an approximation through the annual time step
@@ -503,13 +492,16 @@ Type objective_function<Type>::operator() () {
         survey_age_expectations.row(i) = vector<Type>(pre_survey_age_expectations.row(t)) + ((vector<Type>(vector<Type>(numbers_at_age.row(t + 1)) * survey_select_at_age) - vector<Type>(pre_survey_age_expectations.row(t))) * proportion_mortality_survey);
         // TODO add ageing error here
         vector<Type> numbers_at_age_with_error(A);
+        numbers_at_age_with_error.setZero();
         temp_partition = survey_age_expectations.row(i);
         
-        for (int j = 0; j < A; ++j) {
-          for (int p = 0; p < A; ++p) {
-            numbers_at_age_with_error[p] += temp_partition(j) * ageing_error(j,p);
+        for (int a1 = 0; a1 < A; ++a1) {
+          for (int a2 = 0; a2 < A; ++a2) {
+            numbers_at_age_with_error[a2] += temp_partition(a1) * ageing_error(a1,a2);
           }
         }
+        
+        //std::cout << numbers_at_age_with_error << std::endl;
         temp_partition = numbers_at_age_with_error;
         survey_age_expectations.row(i) = temp_partition / sum(temp_partition);
       }
@@ -525,22 +517,38 @@ Type objective_function<Type>::operator() () {
     fishery_age_pred *= logis_norm_stand_resids(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error, exp(log_norm_sigma_fishery), transformed_phi_fishery, ages, ARMA, LN_resids_centered);
     survey_age_pred *= logis_norm_stand_resids(survey_at_age_obs, survey_age_expectations, survey_at_age_error, exp(log_norm_sigma_survey), transformed_phi_survey, ages, ARMA, LN_resids_centered);
 
-    // Lets imagine we want to simulate some data.
+    // Need to be outside the Simulate block otherwise no seed I think....
+    matrix<Type> fishery_logistic_covariance = covariance_logistic(exp(log_norm_sigma_fishery),transformed_phi_fishery,fishery_age_expectations.cols(),ARMA);
+    matrix<Type> survey_logistic_covariance = covariance_logistic(exp(log_norm_sigma_survey),transformed_phi_survey,survey_age_expectations.cols(),ARMA);
+    using namespace density;
+    MVNORM_t<Type> fishery_simulator(fishery_logistic_covariance);   
+    MVNORM_t<Type> survey_simulator(survey_logistic_covariance);
+    
+    matrix<Type> multivariate_normal_simulation(fishery_at_age_obs.rows(),fishery_at_age_obs.cols());
+    
+    
     SIMULATE {
-      matrix<Type> simulated_fishery_comp(fishery_at_age_obs.rows(),fishery_at_age_obs.cols());
-      simulated_fishery_comp.setZero();
-      matrix<Type> logistic_covariance = covariance_logistic(exp(log_norm_sigma_fishery),transformed_phi_fishery,fishery_age_expectations.cols(),ARMA);
-      using namespace density;
-      MVNORM_t<Type> simulator(logistic_covariance);      
+      matrix<Type> fishery_age_simulation(fishery_at_age_obs.rows(),fishery_at_age_obs.cols());
+      matrix<Type> survey_age_simulation(survey_at_age_obs.rows(),survey_at_age_obs.cols());
+      vector<Type> normal_data_exp;
+      // Simualte fish comp
       for (int y = 0; y < fishery_at_age_obs.rows(); ++y) {
-        vector<Type> normal_data = simulator.simulate() + log(vector<Type>(fishery_age_expectations.row(y)));
-        
+        multivariate_normal_simulation.row(y) = fishery_simulator.simulate();
+        normal_data_exp = exp(fishery_simulator.simulate() + log(vector<Type>(fishery_age_expectations.row(y))));
+        fishery_age_simulation.row(y) = normal_data_exp / sum(normal_data_exp);
       }
-      
+      // Simualte survey comp
+      for (int y = 0; y < survey_at_age_obs.rows(); ++y) {
+        normal_data_exp = exp(survey_simulator.simulate() + log(vector<Type>(survey_age_expectations.row(y))));
+        survey_age_simulation.row(y) = normal_data_exp / sum(normal_data_exp);
+      }
+      REPORT(multivariate_normal_simulation);
+      // Simualted Data
+      REPORT(survey_age_simulation);
+      REPORT(fishery_age_simulation);
     }
     
-    
-    } else {
+  } else {
     neg_ll_survey_age = obj_multinomal_casal_log(survey_at_age_obs, survey_age_expectations, survey_at_age_error);
     neg_ll_fishery_age = obj_multinomal_casal_log(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error);
     fishery_age_pred *= pearsons_resids_multinomial(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error);
@@ -566,18 +574,18 @@ Type objective_function<Type>::operator() () {
   REPORT(B0);
   REPORT(survey_select_at_age);
   REPORT(fish_select_at_age);
-  REPORT(fish_select_at_age);
   REPORT(weight_at_age);
   REPORT(true_ycs);
   REPORT(survey_biomass_expectations);
   REPORT(survey_age_expectations);
   REPORT(fishery_age_expectations);
   
+  // Residuals
   REPORT(fishery_age_pred);
   REPORT(survey_age_pred);
   REPORT(survey_biomass_pred);
-  
-  
+
+  // Likelihood components
   REPORT(neg_ll_fishery_age);
   REPORT(neg_ll_survey_bio);
   REPORT(neg_ll_survey_age);
