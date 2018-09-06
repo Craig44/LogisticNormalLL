@@ -7,6 +7,12 @@ Type square(Type x){
   return x*x;
 }
 
+template<class Type>
+Type posfun(Type x, Type eps, Type &pen){
+  pen += CppAD::CondExpLt(x, eps, Type(0.01) * pow(x-eps,2), Type(0));
+  return CppAD::CondExpGe(x, eps, x, eps/(Type(2)-x/eps));
+}
+
 // Zerofun functions
 template <class Type> 
 Type ZeroFun(Type x, Type delta) {
@@ -212,7 +218,7 @@ Type objective_function<Type>::operator() () {
   DATA_INTEGER(simplex);  // // 0 = no,1 = yes apply the simplex transformation on YCS
   DATA_INTEGER(deviations); // // 0 = no,1 = yes YCS or devs, if devs it is assumed that they YCS vector are constrained sum = 0
   DATA_INTEGER(use_logistic_normal); //should comp data be modelled by the logistic normal
-  DATA_INTEGER(ARMA); // Specifies a certain correlation structure in the covariance.
+  DATA_INTEGER(LN_AR_structure); //The logistic normal AR covariance structure LN1 = 1, LN2 = 2, LN3 = 3, LN3m = 4
   int LN_resids_centered = 1; // could not get un-centred standardised residuals. 
   
   DATA_VECTOR(untransformed_values); // The starting values if doing the simplex transformation
@@ -248,12 +254,14 @@ Type objective_function<Type>::operator() () {
   PARAMETER_VECTOR(YCS);
     // Logistic normal values
   PARAMETER(log_norm_sigma_fishery);
-  PARAMETER_VECTOR(log_norm_phi_fishery);
+  PARAMETER_VECTOR(norm_phi_fishery);
   
   PARAMETER(log_norm_sigma_survey);
-  PARAMETER_VECTOR(log_norm_phi_survey);
-  /*
-   * Transformations
+  PARAMETER_VECTOR(norm_phi_survey);
+  
+  /*---------------------------------------------------------------------
+   *   Parameter Transformations
+   *--------------------------------------------------------------------
    */
   vector<Type> true_ycs;
   Type R0 = exp(log_R0);
@@ -302,36 +310,67 @@ Type objective_function<Type>::operator() () {
   } 
   
   // Transform LN correlation parameters
-  vector<Type> transformed_phi_fishery(log_norm_phi_fishery.size());
-  vector<Type> transformed_phi_survey(log_norm_phi_survey.size());
+  vector<Type> transformed_phi_fishery(norm_phi_fishery.size());
+  vector<Type> transformed_phi_survey(norm_phi_survey.size());
   if (use_logistic_normal == 1) {
-    transformed_phi_fishery = exp(log_norm_phi_fishery);
-    transformed_phi_survey = exp(log_norm_phi_survey);
-    if (log_norm_phi_survey.size() == 2 & ARMA == 0) {
+    transformed_phi_fishery = norm_phi_fishery;
+    transformed_phi_survey = norm_phi_survey;
+    if ((LN_AR_structure == 3) && (norm_phi_fishery.size() != 2))
+      error("need to supply 2 phi parameters in fishery for LN3 structure");
+    if ((LN_AR_structure == 3) && (norm_phi_survey.size() != 2))
+      error("need to supply 2 phi parameters in survey for LN3 structure");
+    if ((LN_AR_structure == 4) && (norm_phi_fishery.size() != 2))
+      error("need to supply 2 phi parameters in fishery for LN3m structure");
+    if ((LN_AR_structure == 4) && (norm_phi_survey.size() != 2))
+      error("need to supply 2 phi parameters in survey for LN3m structure");   
+    if ((LN_AR_structure == 2) && (norm_phi_fishery.size() != 1))
+      error("need to supply 1 phi parameters in fishery for LN2 structure");
+    if ((LN_AR_structure == 2) && (norm_phi_survey.size() != 1))
+      error("need to supply 1 phi parameters in survey for LN2 structure");     
+      
+        
+    if (LN_AR_structure == 3) {
       Type temp_val = -1 + (2 - abs(transformed_phi_survey(0))) * transformed_phi_survey(1);
       transformed_phi_survey(1) = temp_val;
     }
-    if (transformed_phi_fishery.size() == 2 & ARMA == 0) {
+    if (LN_AR_structure == 3) {
       Type temp_val = -1 + (2 - abs(transformed_phi_fishery(0))) * transformed_phi_fishery(1);
       transformed_phi_fishery(1) = temp_val;
     }
   }
 
   
-  
-  
-  
-  /*
+  /*---------------------------------------------------------------------
    * Big list of sanity checks that we would want to add to check before going anyfurtur
+   *--------------------------------------------------------------------
    */
+   
   if (ageing_error.rows() != ageing_error.cols())
     error("ageing error needs to be symetric, ie rows = cols");
   if (ageing_error.rows() != A)
     error("ageing error needs to have rows and cols = number of ages this is not the case");
-
+  if (survey_at_age_obs.rows() != survey_years.size()) {
+    error("survey rows must be the same number of survey years supplied");
+  }
+  if (survey_biomass_obs.size() != survey_years.size()) {
+    error("survey biomass must be the same size of survey years supplied");
+  }
+  if (fishery_at_age_obs.rows() != fishery_years.size()) {
+    error("survey rows must be the same number of survey years supplied");
+  }
+  if (survey_at_age_obs.cols() != ages.size()) {
+    error("survey cols must be the same number as ages");
+  }
+  if (fishery_at_age_obs.cols() != ages.size()) {
+    error("fishery cols must be the same number as ages");
+  }
   
-  // Define containers that will be needed over the model life.
-  // Matrix
+  
+
+  /*---------------------------------------------------------------------
+   * Define containers that will be needed over the model life.
+   *--------------------------------------------------------------------
+   */
   matrix<Type> numbers_at_age(Y+1,A);
   matrix<Type> pre_survey_age_expectations(Y, A);
   matrix<Type> survey_age_expectations(survey_years.size(), A);
@@ -367,12 +406,12 @@ Type objective_function<Type>::operator() () {
   Type neg_ll_survey_bio = 0;
   Type penalty = 0;
   
-  // Begin calcualtions
-
-  //std::cout << "R0 q s_a50 s_ato95 f_a50 f_ato95 YCS\n";
-  //std::cout << R0 << " " << q << " " << s_a50 << " " << s_ato95 << " " << f_a50 << " " << f_ato95 << " " << YCS << "\n";
-
-  // Do preliminary calculations
+  
+  /* 
+  *  ======================
+  *  Do preliminary calculations
+  *  ======================
+  */ 
   length_at_age = VonBertalanffy(ages, L_inf_vb, k_vb, t0_vb);
   weight_at_age = mean_weight_at_age(length_at_age, a_weight, b_weight);
   fish_select_at_age = logistic_ogive(ages, f_a50, f_ato95);
@@ -511,20 +550,22 @@ Type objective_function<Type>::operator() () {
   /*
    * Additive Logistic Normal Likelihood
    */
+  
   if (use_logistic_normal == 1) {
-    neg_ll_fishery_age = NLLlogistnorm(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error, exp(log_norm_sigma_fishery), transformed_phi_fishery, ages, ARMA);
-    neg_ll_survey_age = NLLlogistnorm(survey_at_age_obs, survey_age_expectations, survey_at_age_error, exp(log_norm_sigma_survey), transformed_phi_survey, ages, ARMA);
-    fishery_age_pred *= logis_norm_stand_resids(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error, exp(log_norm_sigma_fishery), transformed_phi_fishery, ages, ARMA, LN_resids_centered);
-    survey_age_pred *= logis_norm_stand_resids(survey_at_age_obs, survey_age_expectations, survey_at_age_error, exp(log_norm_sigma_survey), transformed_phi_survey, ages, ARMA, LN_resids_centered);
+    //neg_ll_survey_age = NLLlogistnorm(survey_at_age_obs, survey_age_expectations, survey_at_age_error, exp(log_norm_sigma_survey), transformed_phi_survey, ages, LN_AR_structure);
+    neg_ll_fishery_age = NLLlogistnorm(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error, exp(log_norm_sigma_fishery), transformed_phi_fishery, ages, LN_AR_structure);
+    
+    fishery_age_pred *= logis_norm_stand_resids(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error, exp(log_norm_sigma_fishery), transformed_phi_fishery, ages, LN_AR_structure, LN_resids_centered);
+    survey_age_pred *= logis_norm_stand_resids(survey_at_age_obs, survey_age_expectations, survey_at_age_error, exp(log_norm_sigma_survey), transformed_phi_survey, ages, LN_AR_structure, LN_resids_centered);
 
     // Need to be outside the Simulate block otherwise no seed I think....
-    matrix<Type> fishery_logistic_covariance = covariance_logistic(exp(log_norm_sigma_fishery),transformed_phi_fishery,fishery_age_expectations.cols(),ARMA);
-    matrix<Type> survey_logistic_covariance = covariance_logistic(exp(log_norm_sigma_survey),transformed_phi_survey,survey_age_expectations.cols(),ARMA);
+    matrix<Type> fishery_logistic_covariance = covariance_logistic(exp(log_norm_sigma_fishery),transformed_phi_fishery,fishery_age_expectations.cols(),LN_AR_structure);
+    matrix<Type> survey_logistic_covariance = covariance_logistic(exp(log_norm_sigma_survey),transformed_phi_survey,survey_age_expectations.cols(),LN_AR_structure);
     using namespace density;
     MVNORM_t<Type> fishery_simulator(fishery_logistic_covariance);   
     MVNORM_t<Type> survey_simulator(survey_logistic_covariance);
     
-    matrix<Type> multivariate_normal_simulation(fishery_at_age_obs.rows(),fishery_at_age_obs.cols());
+    //matrix<Type> multivariate_normal_simulation(fishery_at_age_obs.rows(),fishery_at_age_obs.cols());
     
     
     SIMULATE {
@@ -533,7 +574,7 @@ Type objective_function<Type>::operator() () {
       vector<Type> normal_data_exp;
       // Simualte fish comp
       for (int y = 0; y < fishery_at_age_obs.rows(); ++y) {
-        multivariate_normal_simulation.row(y) = fishery_simulator.simulate();
+        //multivariate_normal_simulation.row(y) = fishery_simulator.simulate();
         normal_data_exp = exp(fishery_simulator.simulate() + log(vector<Type>(fishery_age_expectations.row(y))));
         fishery_age_simulation.row(y) = normal_data_exp / sum(normal_data_exp);
       }
@@ -542,7 +583,7 @@ Type objective_function<Type>::operator() () {
         normal_data_exp = exp(survey_simulator.simulate() + log(vector<Type>(survey_age_expectations.row(y))));
         survey_age_simulation.row(y) = normal_data_exp / sum(normal_data_exp);
       }
-      REPORT(multivariate_normal_simulation);
+      //REPORT(multivariate_normal_simulation);
       // Simualted Data
       REPORT(survey_age_simulation);
       REPORT(fishery_age_simulation);
@@ -553,12 +594,56 @@ Type objective_function<Type>::operator() () {
     neg_ll_fishery_age = obj_multinomal_casal_log(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error);
     fishery_age_pred *= pearsons_resids_multinomial(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error);
     survey_age_pred *= pearsons_resids_multinomial(survey_at_age_obs, survey_age_expectations, survey_at_age_error);
-    
+    SIMULATE {
+      matrix<Type> fishery_age_simulation(fishery_at_age_obs.rows(),fishery_at_age_obs.cols());
+      matrix<Type> survey_age_simulation(survey_at_age_obs.rows(),survey_at_age_obs.cols());
+      fishery_age_simulation.setZero();
+      survey_age_simulation.setZero();
+      // Simulate fishery comp data    
+      for (int i = 0; i < fishery_at_age_obs.cols(); ++i) {
+        Type running_total = 0;
+        for (int j = 0; j < fishery_at_age_obs.rows(); ++j) {
+          fishery_age_simulation(j,i) = rbinom(fishery_at_age_error[j],fishery_age_expectations(j,i));
+          running_total += fishery_age_simulation(j,i);
+        }
+        // rescale to proportions
+        for (int j = 0; j < fishery_at_age_obs.rows(); ++j) {
+          fishery_age_simulation(j,i) /= running_total;
+        }
+          
+      }
+      
+      // Simulate Survey comp data    
+      for (int i = 0; i < survey_at_age_obs.cols(); ++i) {
+        Type running_total = 0;
+        for (int j = 0; j < survey_at_age_obs.rows(); ++j) {
+          survey_age_simulation(j,i) = rbinom(survey_at_age_error[j],survey_age_expectations(j,i));
+          running_total += survey_age_simulation(j,i);
+        }
+        // rescale to proportions
+        for (int j = 0; j < survey_at_age_obs.rows(); ++j) 
+          survey_age_simulation(j,i) /= running_total;
+      }
+      
+      REPORT(survey_age_simulation);
+      REPORT(fishery_age_simulation);
+    }
   }
+  
+  // Deal with biomas observations.
   neg_ll_survey_bio = obj_lognomal_like(survey_biomass_obs, survey_biomass_expectations, survey_biomass_error);
   
   // Calculate residuals
   survey_biomass_pred *= norm_resids_lognormal(survey_biomass_obs, survey_biomass_expectations, survey_biomass_error);
+  
+  SIMULATE {
+    // Lognormal simulation
+    vector<Type> log_sigma = sqrt(log(survey_biomass_error*survey_biomass_error + Type(1.0)));
+    vector<Type> log_mean  = log(survey_biomass_expectations) - (log_sigma * log_sigma) / Type(2.0);
+    vector<Type> survey_biomass_simulaton = exp(rnorm(log_mean, log_sigma));
+    REPORT(survey_biomass_simulaton);
+  }
+   
   /* 
    *  ===============
    *  Report section

@@ -14,7 +14,7 @@ assign.directories<-function(base="")
     
     DIR[["csl_files"]]<-make.filename("CSL_files",DIR[["Base"]],T)
 
-    DIR[["figures"]]<-make.filename("logistic_Funs",DIR[["R"]],T)
+    DIR[["figures"]]<-make.filename("Figures",DIR[["Base"]],T)
   
     DIR[["C++"]]<-make.filename("C++",DIR[["Base"]],T)
     

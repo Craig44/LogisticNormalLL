@@ -1,9 +1,8 @@
-## (03) Compare_comp_likelihood.R
+## (03) test_simulate.R
 ## @Author C Marsh
 ## @Date 3/9/2018
 ## @Description
-## This script uses actual observations from the HAK assessment and compares fits in a 'fixed' effects model to look at residuals to convince me that
-## all this trouble was worth it.
+## test the simulators in the TMB models.
 
 ## Add Libraries
 library(TMB)
@@ -209,7 +208,9 @@ Plcor(opt_obj_run$fishery_age_pred)
 Plcor(opt_obj_run$survey_age_pred)
 
 
-
+#-------------------------------
+# Test simulation component
+#-------------------------------
 ## simulating a MVN
 library(MASS)
 covar = covmat.logistnorm(sigma,phi,binnam = colnames(fish_comp_Dat$obs),sepbysex=F,sexlag=F,ARMA=F)
@@ -236,7 +237,7 @@ test_pars[36] = log(0.001)
 test_pars[37] = log(0.001)
 
 truth = obj$report()
-N_sims = 50
+N_sims = 5000
 pars = obj$env$last.par
 sim <- replicate(N_sims, {
   simdata <- obj$simulate(par= pars, complete=FALSE)
@@ -268,7 +269,9 @@ chris_mean = apply(sim_chris,1,mean)
 sim_mean = apply(sim_survey,2,mean)
 cbind(chris_mean,sim_mean,truth$survey_age_expectations[1,])
 
-plot(1:19,truth$survey_age_expectations[1,], type = "o", xlab = "ages", ylab = "Proportions")
-lines(1:19,chris_mean)
-lines(1:19,chris_mean)
-
+png(filenam = make.filename(file = "Compare_simulated_data.png",path = DIR$figures))
+plot(1:19,truth$survey_age_expectations[1,], type = "o", xlab = "ages", ylab = "Proportions",lwd = 2)
+lines(1:19,chris_mean, col = "blue",lwd = 2)
+lines(1:19,sim_mean, col = "red",lwd = 2)
+legend("topright", legend = c("expected", "Simulated with Chris's package", "Simulated with TMB"), lty = 1, col = c("black","blue","red"))
+dev.off()

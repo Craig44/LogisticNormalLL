@@ -4,10 +4,10 @@
 // @author C.Marsh
 // @date 3/9/2018
 // Conditions for testing a desired correlation structure
-// LN1 => phi.size() == 1 && phi(0) == 0
-// LN2 => phi.size() == 1 && phi(0) != 0
-// LN3 => phi.size() == 2 ARMA == 0
-// LN3m => phi.size() == 2 ARMA == 1
+// LN1 => LN_AR_structure = 1
+// LN2 => LN_AR_structure = 2
+// LN3 => LN_AR_structure = 3
+// LN3m => LN_AR_structure = 4
 
 // Warning I have read that using parameters or derived parameters in if() statements is dangerous
 // I have tested most of these functions and I don't think the optimiser has removed these if() statements
@@ -21,13 +21,13 @@ vector<Type> ARMAacf(Type AR, Type MA, int nBin);
 template <class Type> 
 vector<Type> ARMAacf_non_arma(vector<Type> AR, int nBin);
 template <class Type> 
-matrix<Type>  covariance_logistic(Type sigma, vector<Type> phi, int N_bins, int ARMA);
+matrix<Type>  covariance_logistic(Type sigma, vector<Type> phi, int N_bins, int LN_AR_structure);
 /*
  * The main functions which returns the Negative loglikelihood for the Logistic Normal according to Francis 2014
  */
 
 template <class Type>  
-Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,  Type sigma, vector<Type> phi, vector<Type> bin_labels, int ARMA) {
+Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,  Type sigma, vector<Type> phi, vector<Type> bin_labels, int LN_AR_structure) {
   int A = bin_labels.size();
   Type Y = Type(exp_mat.rows());
   int N_bins = exp_mat.cols();
@@ -42,6 +42,7 @@ Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,
         weights_the_same = false;
     }
   }
+  error("are we here");
   
   matrix<Type> logistic_covariance(N_bins,N_bins);
   logistic_covariance.setZero();
@@ -51,28 +52,33 @@ Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,
   V_mat.setZero();
   matrix<Type> ww(N_bins,N_bins - 1);
   ww.setZero();
+  
+  logistic_covariance = covariance_logistic(sigma,phi,N_bins,LN_AR_structure);
 
-  logistic_covariance = covariance_logistic(sigma,phi,N_bins,ARMA);
-
+  std::cerr << "here"<< std::endl;
+  
   for (int i = 0; i < (N_bins - 1); ++i) {
     k_mat(i,i) = 1.0;
     k_mat(i, A - 1) = -1.0;
   }
+  
   matrix<Type> t_kmat = logistic_covariance * k_mat.transpose();
 
   V_mat = k_mat * t_kmat;
-
+  
   // Calculate log determinant and inverse
   Type log_det = atomic::logdet(V_mat);
-  Type temp_val = 0;
-  matrix<Type> V_mat_inv = atomic::matinvpd(V_mat,temp_val);
+  
+  matrix<Type> V_mat_inv = atomic::matinv(V_mat);
   Type log_obs_tot = obs_mat.log().sum();
+  
   Type neg_ll_LN = 0.5 * Y * Type(A - 1) * log(2*3.1415926535) + log_obs_tot + 0.5 * Y * log_det;
   
   if (not weights_the_same) {
     neg_ll_LN += (Type(N_bins) - 1) * weights_by_year.log().sum();
   }
   
+  std::cerr << "here"<< std::endl;
   
   for (int i = 0; i < exp_mat.rows(); ++i) {
     for (int j = 0; j < N_bins - 1; ++j) {
@@ -81,7 +87,6 @@ Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,
       ww(i, j) = log(l_obs) - log(l_exp);
     }
   }
-
   // TODO add robust which is what is in the C++ code
   Type temp2;
   matrix<Type> year_val, temp1;
@@ -100,7 +105,7 @@ Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,
  * The main functions returns a matrix of standardised residuals according to Francis 2014 these are centred "I could not figure out how to go about non-centred"
  */
 template <class Type>  
-array<Type> logis_norm_stand_resids(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,  Type sigma, vector<Type> phi, vector<Type> bin_labels, int ARMA, int centered) {
+array<Type> logis_norm_stand_resids(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,  Type sigma, vector<Type> phi, vector<Type> bin_labels, int LN_AR_structure, int centered) {
   int A = bin_labels.size();
   int Y = exp_mat.rows();
   int N_bins = exp_mat.cols();
@@ -119,7 +124,7 @@ array<Type> logis_norm_stand_resids(array<Type>& obs_mat, matrix<Type>& exp_mat,
   k_mat.setZero();
   matrix<Type> V_mat(N_bins - 1,N_bins);
   V_mat.setZero();
-  logistic_covariance = covariance_logistic(sigma,phi,N_bins,ARMA);
+  logistic_covariance = covariance_logistic(sigma,phi,N_bins,LN_AR_structure);
   
   for (int i = 0; i < (N_bins - 1); ++i) {
     k_mat(i,i) = 1.0;
@@ -184,24 +189,24 @@ array<Type> logis_norm_stand_resids(array<Type>& obs_mat, matrix<Type>& exp_mat,
  * @covariance_logistic - calculate the covariance matrix that is used in the logistic normal
  */
 template <class Type> 
-matrix<Type>  covariance_logistic(Type sigma, vector<Type> phi, int N_bins,int ARMA) {
+matrix<Type>  covariance_logistic(Type sigma, vector<Type> phi, int N_bins,int LN_AR_structure) {
   unsigned n_phi = phi.size();
   matrix<Type> covar(N_bins,N_bins);
   
   covar.setZero();
-  if (phi[0] == 0.0 & (n_phi == 1)) {
+  if (LN_AR_structure == 1) {
     // no auto correlation
     for (unsigned diag = 0; diag < N_bins; ++ diag)
       covar(diag, diag) = sigma * sigma;
   } else {
-    //covar = calculate_multivariate_normal_covariance(sigma, phi, N_bins, ARMA, false, bin_labels);
+    //covar = calculate_multivariate_normal_covariance(sigma, phi, N_bins, LN_AR_structure, false, bin_labels);
     vector<Type> rho(N_bins - 1);
     
-    if (n_phi == 1) {
+    if (LN_AR_structure == 2) {
       for(int i = 1; i <= N_bins - 1; i++) {
-        rho[i - 1]= pow(phi[0],(Type)i);
+        rho[i - 1]= pow(phi[0],Type(i));
       }
-    } else if (n_phi == 2 && (ARMA == 1)) {
+    } else if (LN_AR_structure == 3) {
       rho = ARMAacf(phi[0], phi[1], N_bins);
     } else {
       rho = ARMAacf_non_arma(phi, N_bins);
