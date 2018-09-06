@@ -5,7 +5,7 @@ across a range of age based compositions. This work follows Francis (2014) Repla
 I would like to thank Chris Francis for sharing his R-code with me which is the back bone for this repo.
 
 
-##Using this code in TMB
+## Using this code in TMB
 
 Copy this [file](https://github.com/Craig44/LogisticNormalLL/blob/master/TMB/Logistic_normal_likelihood.hpp) into your TMB .cpp and include the following line in your model.cpp
 ```#include "Logistic_normal_likelihood.hpp"```. This will allow you to call all the functions in this script. The main two that I call are ```NLLlogistnorm(..)``` to evaluate the negative
