@@ -29,9 +29,9 @@ matrix<Type>  covariance_logistic(Type sigma, vector<Type> phi, int N_bins, int 
 template <class Type>  
 Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,  Type sigma, vector<Type> phi, vector<Type> bin_labels, int LN_AR_structure) {
   int A = bin_labels.size();
-  Type Y = Type(exp_mat.rows());
-  int N_bins = exp_mat.cols();
-  vector<Type> weights_by_year(exp_mat.rows());
+  Type Y = Type(obs_mat.rows());
+  int N_bins = obs_mat.cols();
+  vector<Type> weights_by_year(obs_mat.rows());
   Type mean_N = N.mean();
   bool weights_the_same = true;
   // Calculate a weights that are essentially scaled N
@@ -42,7 +42,6 @@ Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,
         weights_the_same = false;
     }
   }
-  error("are we here");
   
   matrix<Type> logistic_covariance(N_bins,N_bins);
   logistic_covariance.setZero();
@@ -50,13 +49,12 @@ Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,
   k_mat.setZero();
   matrix<Type> V_mat(N_bins - 1,N_bins);
   V_mat.setZero();
-  matrix<Type> ww(N_bins,N_bins - 1);
+  matrix<Type> ww(obs_mat.rows(),N_bins - 1);
   ww.setZero();
   
   logistic_covariance = covariance_logistic(sigma,phi,N_bins,LN_AR_structure);
-
-  std::cerr << "here"<< std::endl;
   
+
   for (int i = 0; i < (N_bins - 1); ++i) {
     k_mat(i,i) = 1.0;
     k_mat(i, A - 1) = -1.0;
@@ -77,17 +75,22 @@ Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,
   if (not weights_the_same) {
     neg_ll_LN += (Type(N_bins) - 1) * weights_by_year.log().sum();
   }
-  
-  std::cerr << "here"<< std::endl;
-  
-  for (int i = 0; i < exp_mat.rows(); ++i) {
+  for (int i = 0; i < obs_mat.rows(); ++i) {
     for (int j = 0; j < N_bins - 1; ++j) {
+      if (obs_mat(i,j) == 0.0) {
+        std::cerr << "found a zero entry at row " << i + 1 << " and col = " << j + 1 << " in observations matrix this is not allowes" << std::endl;
+        return 1;
+      }
+      if (exp_mat(i,j) == 0.0) {
+        std::cerr << "found a zero entry at row " << i + 1 << " and col = " << j + 1 << " in expectations matrix this is not allowes" << std::endl;
+        return 1;
+      }
       Type l_obs = obs_mat(i,j) / obs_mat(i,N_bins - 1);
       Type l_exp = exp_mat(i,j) / exp_mat(i,N_bins - 1);
       ww(i, j) = log(l_obs) - log(l_exp);
     }
   }
-  // TODO add robust which is what is in the C++ code
+
   Type temp2;
   matrix<Type> year_val, temp1;
   for (unsigned year = 0; year < exp_mat.rows(); ++year) {
@@ -203,13 +206,14 @@ matrix<Type>  covariance_logistic(Type sigma, vector<Type> phi, int N_bins,int L
     vector<Type> rho(N_bins - 1);
     
     if (LN_AR_structure == 2) {
+      rho.setZero();
       for(int i = 1; i <= N_bins - 1; i++) {
-        rho[i - 1]= pow(phi[0],Type(i));
+        rho(i - 1) = pow(phi[0],Type(i));
       }
     } else if (LN_AR_structure == 3) {
-      rho = ARMAacf(phi[0], phi[1], N_bins);
-    } else {
       rho = ARMAacf_non_arma(phi, N_bins);
+    } else {
+      rho = ARMAacf(phi[0], phi[1], N_bins);
     }
     // Simple unsexed example currently
     // Create an identy matrix.

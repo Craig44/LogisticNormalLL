@@ -332,10 +332,13 @@ Type objective_function<Type>::operator() () {
     if (LN_AR_structure == 3) {
       Type temp_val = -1 + (2 - abs(transformed_phi_survey(0))) * transformed_phi_survey(1);
       transformed_phi_survey(1) = temp_val;
+      REPORT(transformed_phi_survey);
     }
     if (LN_AR_structure == 3) {
       Type temp_val = -1 + (2 - abs(transformed_phi_fishery(0))) * transformed_phi_fishery(1);
       transformed_phi_fishery(1) = temp_val;
+      REPORT(transformed_phi_fishery);
+      
     }
   }
 
@@ -502,14 +505,12 @@ Type objective_function<Type>::operator() () {
         vector<Type> numbers_at_age_with_error(A);
         numbers_at_age_with_error.setZero();
         temp_partition = fishery_age_expectations.row(i);
-        
         for (int a1 = 0; a1 < A; ++a1) {
           for (int a2 = 0; a2 < A; ++a2) {
             numbers_at_age_with_error[a2] += temp_partition(a1) * ageing_error(a1,a2);
           }
         }
         temp_partition = numbers_at_age_with_error;
-        
         fishery_age_expectations.row(i) = temp_partition / sum(temp_partition);
       }
     }
@@ -546,13 +547,24 @@ Type objective_function<Type>::operator() () {
       }
     }
 
-  }
+  } // Finish process model
+  
+  
+  //////////// head into Observation model evaluating fit's
+  
+  if (fishery_at_age_obs.cols() != fishery_age_expectations.cols())
+    error("fishery age comp has differnet cols between obs and expected");
+  if (fishery_at_age_obs.rows() != fishery_age_expectations.rows())
+    error("fishery age comp has differnet rows between obs and expected");
+  if (survey_at_age_obs.cols() != survey_age_expectations.cols())
+    error("survey age comp has differnet cols between obs and expected");
+  if (survey_at_age_obs.rows() != survey_age_expectations.rows())
+    error("survey age comp has differnet rows between obs and expected");
   /*
    * Additive Logistic Normal Likelihood
    */
-  
   if (use_logistic_normal == 1) {
-    //neg_ll_survey_age = NLLlogistnorm(survey_at_age_obs, survey_age_expectations, survey_at_age_error, exp(log_norm_sigma_survey), transformed_phi_survey, ages, LN_AR_structure);
+    neg_ll_survey_age = NLLlogistnorm(survey_at_age_obs, survey_age_expectations, survey_at_age_error, exp(log_norm_sigma_survey), transformed_phi_survey, ages, LN_AR_structure);
     neg_ll_fishery_age = NLLlogistnorm(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error, exp(log_norm_sigma_fishery), transformed_phi_fishery, ages, LN_AR_structure);
     
     fishery_age_pred *= logis_norm_stand_resids(fishery_at_age_obs, fishery_age_expectations, fishery_at_age_error, exp(log_norm_sigma_fishery), transformed_phi_fishery, ages, LN_AR_structure, LN_resids_centered);
@@ -564,10 +576,10 @@ Type objective_function<Type>::operator() () {
     using namespace density;
     MVNORM_t<Type> fishery_simulator(fishery_logistic_covariance);   
     MVNORM_t<Type> survey_simulator(survey_logistic_covariance);
+    REPORT(fishery_logistic_covariance);
+    REPORT(survey_logistic_covariance);
     
     //matrix<Type> multivariate_normal_simulation(fishery_at_age_obs.rows(),fishery_at_age_obs.cols());
-    
-    
     SIMULATE {
       matrix<Type> fishery_age_simulation(fishery_at_age_obs.rows(),fishery_at_age_obs.cols());
       matrix<Type> survey_age_simulation(survey_at_age_obs.rows(),survey_at_age_obs.cols());
