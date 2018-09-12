@@ -9,6 +9,7 @@ if (Sys.info()[["user"]]=="Dell User") {
 library(nzPlot)
 source(paste(thisPath,"\\Rstudio\\general_Funs\\assign.directories.R",sep=""))
 source(paste(thisPath,"\\Rstudio\\general_Funs\\make.filename.R",sep=""))
+source(paste(thisPath,"\\Rstudio\\general_Funs\\Simplex.R",sep=""))
 DIR<-assign.directories(base=thisPath)
 
 

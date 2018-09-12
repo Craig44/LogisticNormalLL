@@ -288,7 +288,7 @@ Type objective_function<Type>::operator() () {
     //untransformed_values = vector<Type>(untransformed_simplex.row(1));
     jacobian_from_simplex = simplex_jacobian(vector<Type>(untransformed_simplex.row(0)), untransformed_values);
     untransformed_values = vector<Type>(untransformed_simplex.row(1));
-    
+    REPORT(untransformed_values);
     true_ycs = untransformed_values * Type(Y);
   }
   vector<Type> transformed_deviations(Y);
@@ -300,7 +300,7 @@ Type objective_function<Type>::operator() () {
     }
     transformed_deviations(YCS.size()) = -sum(YCS);
     true_ycs = exp(transformed_deviations - 0.5 * sigma_r * sigma_r);
-
+    REPORT(transformed_deviations);
     if (fabs(sum(transformed_deviations)) > 0.0001)
       error("deviations are constrained to sum to 0 but this isn't the case please address");
   }

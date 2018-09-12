@@ -15,6 +15,7 @@ library(ggplot2)
 library(gridExtra)
 library(lemon) ## grid_arrange_shared_legend()
 library(grid)
+library(DataWeighting)
 ## Add other dependency funcitons
 setwd("C:/Work/Projects/PhD/Logistic_normal/Rstudio");
 source("Initialisation.r");
@@ -47,12 +48,17 @@ data$ageing_error = matrix(0,length(data$ages),length(data$ages))
 diag(data$ageing_error) = 1;
 
 data$use_logistic_normal = 1;
+data$deviations = 0
+data$standardise_ycs = 0
+data$simplex = 1
+data$ycs_prior_applies_to_constrained = 1
 
 #data$LN_resids_centered = 0;
 data$LN_AR_structure = 4;
 ARMA = T;
-unit_YCS = rep(1,length(data$years))
-YCS_start = rep(0,length(data$years) - 1)
+unit_YCS = rep(1/length(data$years),length(data$years))
+data$untransformed_values = unit_YCS
+YCS_start = Simplex_transform(unit_YCS)$transformed_vars
 
 pars = list(log_R0 = 18, q = 0.2, s_a50 = 3, s_ato95 = 3, f_a50 = 3, f_ato95 = 3, log_sigma_r = log(0.5), YCS = YCS_start, log_norm_sigma_fishery = 0.1, log_norm_phi_fishery = c(0,0), log_norm_sigma_survey = 0.1, log_norm_phi_survey = c(0,0))
 #parm_labels_to_fix = c("log_norm_sigma_fishery","log_norm_phi_survey","log_norm_sigma_fishery","log_norm_phi_fishery")
@@ -75,13 +81,13 @@ dyn.load(dynlib("model"))
 #obj <- MakeADFun(data=data,parameters=pars, DLL = "model", map= mapped_pars);
 
 ### -------------- LN3m ---------------
-pars = list(log_R0 = 18, q = 0.2, s_a50 = 3, s_ato95 = 3, f_a50 = 3, f_ato95 = 3, log_sigma_r = log(0.5), YCS = YCS_start, log_norm_sigma_fishery = 0.1, norm_phi_fishery = c(0.1,0.1), log_norm_sigma_survey = 0.1, norm_phi_survey = c(0.1,0.1))
+pars = list(log_R0 = 18, q = 0.2, s_a50 = 3, s_ato95 = 3, f_a50 = 3, f_ato95 = 3, log_sigma_r = log(0.5), YCS = YCS_start, log_norm_sigma_fishery = 0.1, norm_phi_fishery = c(-0.1,-0.1), log_norm_sigma_survey = 0.1, norm_phi_survey = c(-0.1,-0.1))
 data$LN_AR_structure = 4;
 data$use_logistic_normal = 1;
 obj_LN3m <- MakeADFun(data=data,parameters=pars, DLL = "model");
 
-lower = c(16, 0.01,1,1,1,1,-2.995732,rep(-10, length(YCS_start)), -3,-0.99,-Inf, -3,-0.99,-Inf)
-upper = c(19, 1,20 ,20 ,20 ,20, 0.9162907,rep(10, length(YCS_start)),0.7,0.99,Inf,0.7,0.99,Inf)
+lower = c(16, 0.01,0.1,0.1,0.1,0.1,-2.995732,rep(-Inf, length(YCS_start)), -3,-0.99,-Inf, -3,-0.99,-Inf)
+upper = c(19, 1,20 ,20 ,20 ,20, 0.9162907,rep(Inf, length(YCS_start)),0.7,0.99,Inf,0.7,0.99,Inf)
 
 names(upper) = names(pars)
 names(lower) = names(lower)
@@ -96,9 +102,13 @@ obj_LN3m_simulate = obj_LN3m$simulate(complete = T);
 
 ### -------------- LN3 ---------------
 data$LN_AR_structure = 3
+unit_YCS = rep(1/length(data$years),length(data$years))
+data$untransformed_values = unit_YCS
+YCS_start = Simplex_transform(unit_YCS)$transformed_vars
+
 pars = list(log_R0 = 18, q = 0.2, s_a50 = 3, s_ato95 = 3, f_a50 = 3, f_ato95 = 3, log_sigma_r = log(0.5), YCS = YCS_start, log_norm_sigma_fishery = 0.1, norm_phi_fishery = c(0,0.5), log_norm_sigma_survey = 0.1, norm_phi_survey = c(0,0.5))
-lower = c(16, 0.01,1,1,1,1,-2.995732,rep(-10, length(YCS_start)), -3,-1,0.001, -3,-1,0.001)
-upper = c(19, 1,20 ,20 ,20 ,20, 0.9162907,rep(10, length(YCS_start)),0.7,1,0.99,0.7,1,0.99)
+lower = c(16, 0.01,0.1,0.1,0.1,0.1,-2.995732,rep(-Inf, length(YCS_start)), -3,-1,0.001, -3,-1,0.001)
+upper = c(19, 1,20 ,20 ,20 ,20, 0.9162907,rep(Inf, length(YCS_start)),0.7,1,0.99,0.7,1,0.99)
 
 names(upper) = names(pars)
 names(lower) = names(lower)
@@ -115,9 +125,12 @@ obj_LN3_report = obj_LN3$report();
 ### -------------- LN2 ---------------
 pars = list(log_R0 = 18, q = 0.2, s_a50 = 3, s_ato95 = 3, f_a50 = 3, f_ato95 = 3, log_sigma_r = log(0.5), YCS = YCS_start, log_norm_sigma_fishery = 0.1, norm_phi_fishery = c(0.5), log_norm_sigma_survey = 0.1, norm_phi_survey = c(0.5))
 data$LN_AR_structure = 2
+unit_YCS = rep(1/length(data$years),length(data$years))
+data$untransformed_values = unit_YCS
+YCS_start = Simplex_transform(unit_YCS)$transformed_vars
 
-lower = c(16, 0.01,1,1,1,1,-2.995732,rep(-10, length(YCS_start)), -3,-0.99, -3,-0.99)
-upper = c(19, 1,20 ,20 ,20 ,20, 0.9162907,rep(10, length(YCS_start)),0.7,0.99,0.7,0.99)
+lower = c(16, 0.01,0.1,0.1,0.1,0.1,-2.995732,rep(-Inf, length(YCS_start)), -3,-0.99, -3,-0.99)
+upper = c(19, 1,20 ,20 ,20 ,20, 0.9162907,rep(Inf, length(YCS_start)),0.7,0.99,0.7,0.99)
 names(upper) = names(pars)
 names(lower) = names(pars)
 
@@ -126,28 +139,20 @@ obj_LN2 <- MakeADFun(data=data,parameters=pars, DLL = "model");
 obj_LN2$gr()
 obj_LN2$fn()
 
-pars2 = list(log_R0 = 18, q = 0.2, s_a50 = 3, s_ato95 = 3, f_a50 = 3, f_ato95 = 3, log_sigma_r = log(0.5), YCS = YCS_start, log_norm_sigma_fishery = 0.1, norm_phi_fishery = c(0.5), log_norm_sigma_survey = 0.1, norm_phi_survey = c(0.5))
-obj2_LN2 <- MakeADFun(data=data,parameters=pars2, DLL = "model");
-
-pars3 = list(log_R0 = 18, q = 0.2, s_a50 = 3, s_ato95 = 3, f_a50 = 3, f_ato95 = 3, log_sigma_r = log(0.5), YCS = YCS_start, log_norm_sigma_fishery = 0.1, norm_phi_fishery = c(-0.5), log_norm_sigma_survey = 0.1, norm_phi_survey = c(-0.5))
-obj3_LN2 <- MakeADFun(data=data,parameters=pars3, DLL = "model");
-c(obj_LN2$fn(),obj2_LN2$fn(), obj3_LN2$fn())
-
 opt_LN2 <- nlminb(start = obj_LN2$par, objective = obj_LN2$fn, gradient = obj_LN2$gr, lower=lower, upper=upper, control = list(abs.tol = 0.0001, rel.tol = 0.0001, eval.max = 20000, iter.max = 20000))
-opt2_LN2 <- nlminb(start = obj2_LN2$par, objective = obj2_LN2$fn, gradient = obj2_LN2$gr, lower=lower, upper=upper, control = list(abs.tol = 0.0001, rel.tol = 0.0001, eval.max = 20000, iter.max = 20000))
-opt3_LN2 <- nlminb(start = obj3_LN2$par, objective = obj3_LN2$fn, gradient = obj3_LN2$gr, lower=lower, upper=upper, control = list(abs.tol = 0.0001, rel.tol = 0.0001, eval.max = 20000, iter.max = 20000))
 
 opt_LN2$convergence
-rbind(opt$par,opt2_LN2$par, opt3_LN2$par)
-
 obj_LN2_report = obj_LN2$report();
 obj_LN2_simulate = obj_LN2$simulate(complete = T);
 
 ### -------------- LN1 ---------------
 pars = list(log_R0 = 18, q = 0.2, s_a50 = 3, s_ato95 = 3, f_a50 = 3, f_ato95 = 3, log_sigma_r = log(0.5), YCS = YCS_start, log_norm_sigma_fishery = 0.1, norm_phi_fishery = c(0), log_norm_sigma_survey = 0.1, norm_phi_survey = c(0))
 data$LN_AR_structure = 1
+unit_YCS = rep(1/length(data$years),length(data$years))
+data$untransformed_values = unit_YCS
+YCS_start = Simplex_transform(unit_YCS)$transformed_vars
 
-lower = c(16, 0.01,1,1,1,1,-2.995732,rep(-10, length(YCS_start)), -3,-1, -3,-1)
+lower = c(16, 0.01,0.1,0.1,0.1,0.1,-2.995732,rep(-10, length(YCS_start)), -3,-1, -3,-1)
 upper = c(19, 1,20 ,20 ,20 ,20, 0.9162907,rep(10, length(YCS_start)),0.7,1,0.7,1)
 names(upper) = names(pars)
 names(lower) = names(lower)
@@ -166,6 +171,9 @@ obj_LN1_simulate = obj_LN1$simulate(complete = T);
 ### --------------- Multinomial ------------
 data$use_logistic_normal = 0
 parm_labels_to_fix = c("norm_phi_survey","log_norm_sigma_survey","log_norm_sigma_fishery", "norm_phi_fishery")
+unit_YCS = rep(1/length(data$years),length(data$years))
+data$untransformed_values = unit_YCS
+YCS_start = Simplex_transform(unit_YCS)$transformed_vars
 
 obj_multi <- MakeADFun(data=data,parameters=pars, DLL = "model", map = mapped_pars);
 obj_multi$fn();
@@ -175,6 +183,30 @@ opt_multi$convergence
 
 obj_multi_report = obj_multi$report();
 obj_multi_simulate = obj_multi$simulate(complete = T);
+
+### --- Do a DataWeighting exercise
+data_weighted = data;
+
+Fit = list();
+Fit$obs = data_weighted$survey_at_age_obs
+Fit$fit = obj_multi_weighted_report$survey_age_expectations
+Fit$error.value = data_weighted$survey_at_age_error
+survey_weight = Method.TA1.8(Fit, plotit = T)
+data_weighted$survey_at_age_error = data_weighted$survey_at_age_error * survey_weight;
+
+Fit = list();
+Fit$obs = data_weighted$fishery_at_age_obs
+Fit$fit = obj_multi_weighted_report$fishery_age_expectations
+Fit$error.value = data_weighted$fishery_at_age_error
+fishery_weight = Method.TA1.8(Fit, plotit = T)
+data_weighted$data_weighted_at_age_error = data_weighted$fishery_at_age_error * fishery_weight;
+
+unit_YCS = rep(1/length(data$years),length(data$years))
+data_weighted$untransformed_values = unit_YCS
+
+obj_multi_weighted <- MakeADFun(data=data_weighted,parameters=pars, DLL = "model", map = mapped_pars);
+opt_multi_weighted <- nlminb(start = obj_multi_weighted$par, objective = obj_multi_weighted$fn, gradient = obj_multi_weighted$gr, lower=lower, upper=upper, control = list(abs.tol = 0.0001, rel.tol = 0.0001, eval.max = 20000, iter.max = 20000))
+obj_multi_weighted_report = obj_multi_weighted$report();
 
 ###############################
 ## To double triple check 
@@ -228,6 +260,7 @@ lines(data$survey_years, obj_LN3_report$survey_biomass_expectations, lty = 2, co
 lines(data$survey_years, obj_LN2_report$survey_biomass_expectations, lty = 2, col = "red",lwd = 2)
 lines(data$survey_years, obj_LN1_report$survey_biomass_expectations, lty = 2, col = "darkgreen",lwd = 2)
 lines(data$survey_years, obj_multi_report$survey_biomass_expectations, lty = 2, col = "cyan",lwd = 2)
+lines(data$survey_years, obj_multi_weighted_report$survey_biomass_expectations, lty = 2, col = "green",lwd = 2)
 legend('topright', legend = c("LN3m", "LN3", "LN2","LN1","Multinom"), col = c("purple","orange","red","darkgreen","cyan"), lty = 2, lwd = 2, cex = 0.8)
 dev.off()
 #### Age frequency look at standardised residuals
@@ -265,8 +298,21 @@ lines(data$years, obj_LN3_report$SSB, lty = 2, col = "orange",lwd = 2)
 lines(data$years, obj_LN2_report$SSB, lty = 2, col = "red",lwd = 2)
 lines(data$years, obj_LN1_report$SSB, lty = 2, col = "darkgreen",lwd = 2)
 lines(data$years, obj_multi_report$SSB, lty = 2, col = "cyan",lwd = 2)
+lines(data$years, obj_multi_weighted_report$SSB, lty = 2, col = "green",lwd = 2)
+
 legend('topright', legend = c("LN3m", "LN3", "LN2","LN1","Multinom"), col = c("purple","orange","red","darkgreen","cyan"), lty = 2, lwd = 2)
 
+## true YCS
+plot(data$years, obj_LN3m_report$true_ycs, lty = 2, col = "purple",lwd = 2, xlab = "years", ylab = "True YCS", type = "l", ylim = c(0,3))
+lines(data$years, obj_LN3_report$true_ycs, lty = 2, col = "orange",lwd = 2)
+lines(data$years, obj_LN2_report$true_ycs, lty = 2, col = "red",lwd = 2)
+lines(data$years, obj_LN1_report$true_ycs, lty = 2, col = "darkgreen",lwd = 2)
+lines(data$years, obj_multi_report$true_ycs, lty = 2, col = "cyan",lwd = 2)
+lines(data$years, obj_multi_weighted_report$true_ycs, lty = 2, col = "green",lwd = 2)
+legend('topright', legend = c("LN3m", "LN3", "LN2","LN1","Multinom"), col = c("purple","orange","red","darkgreen","cyan"), lty = 2, lwd = 2)
+
+sum(obj_LN3m$env$last.par[names(obj_LN3m$env$last.par) %in%  "YCS"])
+obj_LN3m_report$untransformed_values
 
 ## Perhaps we should weight the Multinomial data.
 
@@ -275,4 +321,20 @@ obj_LN3m_report$neg_ll
 obj_LN3_report$neg_ll
 obj_LN2_report$neg_ll
 obj_LN1_report$neg_ll
+
+
+truth = obj_LN3m_report
+N_sims = 5
+pars = obj_LN3m$env$last.par
+estimated_vals = obj_LN3m_report$untransformed_values
+
+sim <- replicate(N_sims, {
+  obj_LN3m$env$data$untransformed_values = estimated_vals
+  simdata <- obj_LN3m$simulate(complete=FALSE)
+},simplify = FALSE)
+
+sim[[1]]$true_ycs
+sim[[2]]$true_ycs
+sim[[3]]$true_ycs
+sim[[4]]$true_ycs
 
