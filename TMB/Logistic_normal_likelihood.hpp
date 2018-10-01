@@ -1,5 +1,5 @@
-// A TMB template script to calculate the negative loglikelihood
-// and standardised residuals from a Logistic Normal likelihood
+// A TMB template script to calculate the negative log likelihood
+// and standardized residuals from a Logistic Normal likelihood
 // According to RICC "Francis 2014 Replacing the multinomial in stock assessment models: A first step"
 // @author C.Marsh
 // @date 3/9/2018
@@ -10,8 +10,12 @@
 // LN3m => LN_AR_structure = 4
 
 // Warning I have read that using parameters or derived parameters in if() statements is dangerous
-// I have tested most of these functions and I don't think the optimiser has removed these if() statements
+// I have tested most of these functions and I don't think the optimizer has removed these if() statements
 // However if anyone uses this be aware and please triple check output.
+// @author C.Marsh
+// copyright this is available under the same license as TMB although I would appreciate acknowledgment.
+// This is supplied with no guarantee, although I have thoroughly tested (caveat for unsexed data) I can never give 100% assurance.
+//
 
 // Forward Declaration of functions that are used in NLLlogistnorm and described below the NLLlogistnorm function
 template <class Type> 

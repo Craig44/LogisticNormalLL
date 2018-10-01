@@ -10,6 +10,6 @@ I would like to thank Chris Francis for sharing his R-code with me which is the 
 Copy this [file](https://github.com/Craig44/LogisticNormalLL/blob/master/TMB/Logistic_normal_likelihood.hpp) into your TMB .cpp and include the following line in your model.cpp
 ```#include "Logistic_normal_likelihood.hpp"```. This will allow you to call all the functions in this script. The main two that I call are ```NLLlogistnorm(..)``` to evaluate the negative
 likelihood and ```logis_norm_stand_resids(...)``` to calculate standardized residuals from the distribution. To see these functions in usage you can look at the ```model.cpp``` found in 
-this [directory](https://github.com/Craig44/LogisticNormalLL/tree/master/TMB)
+this [directory](https://github.com/Craig44/LogisticNormalLL/tree/master/TMB). If you do use this it would be great if you could acknowledge the work, Chairs
 
 
