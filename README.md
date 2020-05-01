@@ -13,3 +13,6 @@ likelihood and ```logis_norm_stand_resids(...)``` to calculate standardized resi
 this [directory](https://github.com/Craig44/LogisticNormalLL/tree/master/TMB). If you do use this it would be great if you could acknowledge the work, Chairs
 
 
+## TODO
+- deal with Sex
+- Add robustification (adding a small constant), or truncating and amalgamating cols.

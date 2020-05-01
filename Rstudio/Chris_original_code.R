@@ -90,7 +90,7 @@ function(compdat,sigma,phi=0,covmat=NULL,sepbysex=F,
             negloglik <- negloglik+(0.5/(wts[i]^2))*
                 ((ww[i,] %*% Vinv) %*% ww[i,] - sum(tmp) -
                  sum(log(exp(-tmp)+0.01)))
-        }
+        } 
         else negloglik <- negloglik+(0.5/(wts[i]^2))*
             (ww[i,] %*% Vinv) %*% ww[i,]
     }
@@ -101,6 +101,7 @@ function(compdat,sigma,phi=0,covmat=NULL,sepbysex=F,
     }
     tmp
 }
+
 covmat.logistnorm <-
 function (sigma,phi,binnam,sepbysex=F,sexlag=F,ARMA=F)
     ## Constructs the covariance matrix of the multivariate normal variate X
