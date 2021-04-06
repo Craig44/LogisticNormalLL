@@ -2,9 +2,14 @@
 
 # Set paths and working directories
 
+
+# Set paths and working directories
+
 if (Sys.info()[["user"]]=="Dell User") {
   thisPath <- "C:\\Work\\Projects\\PhD\\Logistic_normal\\"
-} 
+} else if (Sys.info()[["user"]]=="Cyril") {
+  thisPath <- "C:\\Work\\Projects\\PhD\\Logistic_normal\\"
+}
 
 library(nzPlot)
 source(paste(thisPath,"\\Rstudio\\general_Funs\\assign.directories.R",sep=""))

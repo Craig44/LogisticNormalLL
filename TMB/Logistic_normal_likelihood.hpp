@@ -28,8 +28,10 @@ template <class Type>
 matrix<Type>  covariance_logistic(Type sigma, vector<Type> phi, int N_bins, int LN_AR_structure);
 /*
  * The main functions which returns the Negative loglikelihood for the Logistic Normal according to Francis 2014
+ * obs_mat observations proprotions n_years * bin_labels.size()
+ * exp_mat = fitted proportions n_years * bin_labels.size()
+ * N = effective sample size n_years
  */
-
 template <class Type>  
 Type NLLlogistnorm(array<Type>& obs_mat, matrix<Type>& exp_mat, vector<Type>& N,  Type sigma, vector<Type> phi, vector<Type> bin_labels, int LN_AR_structure) {
   int A = bin_labels.size();

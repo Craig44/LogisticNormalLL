@@ -43,7 +43,7 @@ setwd(DIR$TMB)
 setwd("AddLogisticNormal")
 compile("orig.cpp")
 dyn.load(dynlib("orig"))
-
+#dyn.unload(dynlib("orig"))
 
 
 load(file = make.filename(file = "tmb.RData", path = DIR$TMB))
